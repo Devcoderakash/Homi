@@ -71,6 +71,15 @@ export async function request<T = any>(endpoint: string, options: RequestOptions
     }
 
     if (!res.ok) {
+      if (res.status === 401 && typeof window !== "undefined") {
+        localStorage.removeItem("admin_token");
+        document.cookie = "sb-access-token=; path=/; max-age=0; SameSite=Lax";
+        document.cookie = "homi_admin_session=; path=/; max-age=0; SameSite=Lax";
+        if (!window.location.pathname.startsWith("/login")) {
+          window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+          return new Promise(() => {}) as Promise<T>;
+        }
+      }
       const msg = data && typeof data === "object" && "error" in data ? data.error : `Request failed (${res.status})`;
       throw new ApiError(res.status, msg, data);
     }

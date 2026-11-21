@@ -33,6 +33,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
+      if (!activeToken && typeof window !== "undefined") {
+        activeToken = localStorage.getItem("admin_token") || undefined;
+      }
+
       const me = await AuthService.getMe(activeToken);
       if (me && me.role === "admin") {
         setUser(me);

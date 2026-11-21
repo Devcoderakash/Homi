@@ -184,8 +184,127 @@ export default function AdminPaymentsPage() {
           </div>
         </div>
 
-        {/* Payments Table */}
-        <div className="bg-white rounded-xl border border-[#e5ebe4] shadow-xs overflow-hidden">
+        {/* Mobile View: Stacked Payment Cards */}
+        <div className="block md:hidden space-y-3">
+          {loading ? (
+            <div className="bg-white rounded-xl border border-[#e5ebe4] p-6 text-center text-[#718078] text-xs">
+              <div className="w-7 h-7 border-3 border-[#123b30] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              Loading payment submissions...
+            </div>
+          ) : filteredPayments.length === 0 ? (
+            <div className="bg-white rounded-xl border border-[#e5ebe4] p-6 text-center space-y-2 text-[#718078]">
+              <AlertCircle size={24} className="mx-auto text-[#a1c347]" />
+              <h3 className="font-extrabold text-[#123b30] text-sm">No Payment Records Found</h3>
+              <p className="text-xs">
+                {statusFilter !== "ALL"
+                  ? `No payments matching status '${statusFilter}'.`
+                  : "No customer payments submitted yet."}
+              </p>
+            </div>
+          ) : (
+            filteredPayments.map((p) => {
+              const isSubmitted = (p.status || "").toUpperCase() === "PAYMENT_SUBMITTED";
+              const isPaid = (p.status || "").toUpperCase() === "PAID";
+              const isRejected = (p.status || "").toUpperCase() === "PAYMENT_REJECTED";
+
+              return (
+                <div key={p.id} className="bg-white rounded-xl border border-[#e5ebe4] p-4 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between gap-2">
+                    <Link
+                      href={`/requests/${p.requestId}`}
+                      className="font-extrabold text-[#123b30] text-sm hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>#HOMI-{p.requestId}</span>
+                      <ExternalLink size={12} className="text-[#718078]" />
+                    </Link>
+                    <span
+                      className={`text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase border ${getStatusBadge(
+                        p.status
+                      )}`}
+                    >
+                      {(p.status || "").replace(/_/g, " ")}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                    <div className="bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                      <span className="text-[10px] text-[#718078] uppercase font-bold block">Customer</span>
+                      <strong className="text-[#123b30] block truncate">{p.customerName}</strong>
+                      <span className="text-[11px] text-[#718078] block">{p.customerPhone}</span>
+                    </div>
+                    <div className="bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                      <span className="text-[10px] text-[#718078] uppercase font-bold block">Amount</span>
+                      <strong className="text-[#123b30] text-sm block">
+                        ₹{Number(p.amount || 0).toLocaleString("en-IN")}
+                      </strong>
+                      <span className="text-[10px] text-[#718078] uppercase block">{p.paymentMethod || "UPI"}</span>
+                    </div>
+                  </div>
+
+                  {p.transactionReference && (
+                    <div className="flex items-center justify-between bg-[#f8faf5] px-3 py-2 rounded-lg border border-[#e5ebe4] text-xs">
+                      <div>
+                        <span className="text-[10px] text-[#718078] uppercase font-bold block">UTR Code</span>
+                        <code className="text-[#123b30] font-mono font-bold">{p.transactionReference}</code>
+                      </div>
+                      <button
+                        onClick={() => handleCopy(p.transactionReference, `mob-${p.id}`)}
+                        className="p-1.5 hover:bg-[#e5ebe4] rounded text-[#718078] transition-colors"
+                        title="Copy UTR"
+                      >
+                        {copiedId === `mob-${p.id}` ? (
+                          <Check size={14} className="text-emerald-700" />
+                        ) : (
+                          <Copy size={14} />
+                        )}
+                      </button>
+                    </div>
+                  )}
+
+                  {p.paymentScreenshotPath && (
+                    <button
+                      onClick={() => setPreviewImage(p.paymentScreenshotPath)}
+                      className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-[#123b30] bg-[#f0f4ee] py-2 rounded-lg hover:bg-[#e5ebe4] transition-colors"
+                    >
+                      <Eye size={14} />
+                      <span>View Payment Proof Screenshot</span>
+                    </button>
+                  )}
+
+                  {isRejected && p.rejectionReason && (
+                    <div className="text-xs text-rose-700 bg-rose-50 p-2 rounded-lg border border-rose-200">
+                      <strong>Rejection reason:</strong> {p.rejectionReason}
+                    </div>
+                  )}
+
+                  {isSubmitted && (
+                    <div className="flex items-center gap-2 pt-2 border-t border-[#e5ebe4]">
+                      <button
+                        onClick={() => handleVerify(p.id, p.requestId, p.amount)}
+                        disabled={acting}
+                        className="btn btn-dark bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-2 px-3 flex-1 flex items-center justify-center gap-1.5 shadow-xs"
+                      >
+                        <CheckCircle2 size={14} />
+                        <span>Verify & Mark Paid</span>
+                      </button>
+                      <button
+                        onClick={() => handleReject(p.id, p.requestId)}
+                        disabled={acting}
+                        className="btn btn-secondary border-rose-300 text-rose-700 hover:bg-rose-50 font-bold text-xs py-2 px-3 flex items-center justify-center gap-1.5"
+                      >
+                        <XCircle size={14} />
+                        <span>Reject</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Payments Table (Desktop / Tablet) */}
+        <div className="bg-white rounded-xl border border-[#e5ebe4] shadow-xs overflow-hidden hidden md:block">
           {loading ? (
             <div className="p-12 text-center text-[#718078] text-xs">
               <div className="w-7 h-7 border-3 border-[#123b30] border-t-transparent rounded-full animate-spin mx-auto mb-2" />

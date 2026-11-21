@@ -166,8 +166,119 @@ export default function AdminApplicationsPage() {
           />
         </div>
 
-        {/* Applications Table */}
-        <div className="homi-card overflow-hidden">
+        {/* Mobile View: Stacked Application Cards */}
+        <div className="block md:hidden space-y-3">
+          {loading ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              <div className="w-6 h-6 border-2 border-[#123b30] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              Loading worker applications...
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              <p className="font-bold text-xs text-[#123b30] mb-1">
+                No worker proposals found matching this filter.
+              </p>
+              <Link
+                href="/requests"
+                className="btn btn-dark text-xs py-1.5 px-3.5 font-bold inline-flex items-center gap-1.5 shadow-2xs mt-2"
+              >
+                <span>View Open Requests</span>
+              </Link>
+            </div>
+          ) : (
+            filtered.map((a) => (
+              <div key={a.id} className="homi-card p-4 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-[#123b30] text-[#d9ed89] font-extrabold text-xs flex items-center justify-center shrink-0">
+                      {(a.workerName || "W").charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-[#123b30] text-sm">
+                        {a.workerName || `Worker #${a.workerId}`}
+                      </div>
+                      <div className="text-[11px] text-[#718078]">
+                        {a.workerSpecialty || a.specialty || "Certified Technician"}
+                      </div>
+                    </div>
+                  </div>
+                  <StatusBadge status={a.status} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                  <div className="bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                    <span className="text-[10px] text-[#718078] uppercase font-bold block">Related Job</span>
+                    <Link
+                      href={`/requests/${a.requestId}`}
+                      className="font-extrabold text-[#123b30] hover:text-[#266352] flex items-center gap-1 mt-0.5"
+                    >
+                      <span>Request #{a.requestId}</span>
+                      <ExternalLink className="w-3 h-3 text-[#718078]" />
+                    </Link>
+                  </div>
+                  <div className="bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                    <span className="text-[10px] text-[#718078] uppercase font-bold block">Expected Fee</span>
+                    <span className="font-extrabold text-[#183c31] block mt-0.5">
+                      {a.expectedCharges ? formatRupees(a.expectedCharges) : "Standard"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-[#718078]">
+                  <span className="font-bold text-[#183c31] bg-[#f0f4ee] px-2 py-0.5 rounded capitalize">
+                    {a.category || "Service"}
+                  </span>
+                  <span>
+                    Applied: {new Date(a.appliedAt || a.createdAt).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                    })}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2 border-t border-[#e5ebe4]">
+                  {a.status !== "accepted" && (
+                    <>
+                      <button
+                        onClick={() => handleAssign(a.requestId, a.workerId, a.id)}
+                        disabled={actingId === a.id}
+                        className="btn btn-dark text-xs py-2 px-3 font-bold flex-1"
+                      >
+                        Assign
+                      </button>
+                      {a.status !== "shortlisted" && (
+                        <button
+                          onClick={() => handleShortlist(a.id)}
+                          disabled={actingId === a.id}
+                          className="btn btn-outline text-[#123b30] text-xs py-2 px-3 font-bold"
+                        >
+                          Shortlist
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleReject(a.id)}
+                        disabled={actingId === a.id}
+                        className="btn bg-[#fee2e2] text-[#991b1b] text-xs py-2 px-3 font-bold"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={() => setSelectedApp(a)}
+                    className="btn btn-outline text-[#123b30] text-xs py-2 px-3 font-bold flex items-center justify-center gap-1"
+                  >
+                    <Eye size={14} />
+                    <span>View</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Applications Table (Desktop / Tablet) */}
+        <div className="homi-card overflow-hidden hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>

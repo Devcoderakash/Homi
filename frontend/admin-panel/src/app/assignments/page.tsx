@@ -147,8 +147,69 @@ export default function AssignmentsPage() {
           />
         </div>
 
-        {/* Assignments Table */}
-        <div className="homi-card overflow-hidden">
+        {/* Mobile View: Stacked Assignment Cards */}
+        <div className="block md:hidden space-y-3">
+          {paginated.length === 0 ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              No active assignments found matching this filter.
+            </div>
+          ) : (
+            paginated.map((a) => (
+              <div
+                key={a.id}
+                onClick={() => setSelectedAssignment(a)}
+                className="homi-card p-4 space-y-3 cursor-pointer"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-[#123b30] text-sm">#{a.bookingId}</span>
+                    <span className="font-bold text-[11px] text-[#183c31] bg-[#f0f4ee] px-2 py-0.5 rounded capitalize">
+                      {a.category}
+                    </span>
+                  </div>
+                  <StatusBadge status={a.status} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                  <div className="bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                    <span className="text-[10px] text-[#718078] uppercase font-bold block">Assigned Technician</span>
+                    <strong className="text-[#123b30] block truncate mt-0.5">{a.workerName}</strong>
+                    <span className="text-[10px] text-[#718078] block">ID #{a.workerId}</span>
+                  </div>
+                  <div className="bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                    <span className="text-[10px] text-[#718078] uppercase font-bold block">Customer</span>
+                    <strong className="text-[#123b30] block truncate mt-0.5">{a.customerName}</strong>
+                    <span className="text-[10px] text-[#718078] block">Assigned: {new Date(a.assignedAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2 border-t border-[#e5ebe4]">
+                  <Link
+                    href={`/requests/${a.bookingId}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="btn btn-outline text-[#123b30] text-xs py-2 px-3 font-bold flex-1 flex items-center justify-center gap-1.5"
+                  >
+                    <ExternalLink size={14} />
+                    <span>View Request</span>
+                  </Link>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedAssignment(a);
+                    }}
+                    className="btn btn-dark text-xs py-2 px-3 font-bold flex-1 flex items-center justify-center gap-1.5"
+                  >
+                    <Eye size={14} />
+                    <span>Track Status</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Assignments Table (Desktop / Tablet) */}
+        <div className="homi-card overflow-hidden hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>

@@ -239,8 +239,104 @@ export default function WorkersPage() {
           </div>
         </div>
 
-        {/* Workers Table */}
-        <div className="homi-card overflow-hidden">
+        {/* Mobile View: Stacked Worker Cards */}
+        <div className="block md:hidden space-y-3">
+          {loading ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              <div className="w-6 h-6 border-2 border-[#123b30] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              Loading worker roster...
+            </div>
+          ) : paginatedWorkers.length === 0 ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              No service workers found.
+            </div>
+          ) : (
+            paginatedWorkers.map((w) => (
+              <div key={w.id} className="homi-card p-4 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-full bg-[#123b30] text-[#d9ed89] font-extrabold text-xs flex items-center justify-center shrink-0">
+                      {(w.name || w.fullName || w.email || "W").charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-extrabold text-[#123b30] text-sm">
+                        {w.name || w.fullName || "Worker Partner"}
+                      </p>
+                      <p className="text-[11px] text-[#718078]">ID #{w.id}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={(e) => handleToggle(e, w)}
+                    disabled={togglingId === w.id}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#f0f4ee]"
+                    title="Toggle availability"
+                  >
+                    {w.available ? (
+                      <>
+                        <ToggleRight className="w-5 h-5 text-[#285437]" />
+                        <span className="text-[#285437] font-extrabold text-[11px]">Active</span>
+                      </>
+                    ) : (
+                      <>
+                        <ToggleLeft className="w-5 h-5 text-[#718078]" />
+                        <span className="text-[#718078] text-[11px]">Inactive</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+                  <div className="bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                    <span className="text-[10px] text-[#718078] uppercase font-bold block">Specialty</span>
+                    <span className="font-bold text-[#183c31] capitalize">{w.specialty || "Handyman"}</span>
+                  </div>
+                  <div className="bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                    <span className="text-[10px] text-[#718078] uppercase font-bold block">Visit Fee</span>
+                    <span className="font-bold text-[#183c31]">{w.visitFee ? formatRupees(w.visitFee) : "Standard"}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-1 text-xs text-[#41534a]">
+                  <div className="flex items-center gap-1.5">
+                    <Mail size={12} className="text-[#718078] shrink-0" />
+                    <span className="truncate">{w.email}</span>
+                  </div>
+                  {w.phone && (
+                    <div className="flex items-center gap-1.5">
+                      <Phone size={12} className="text-[#718078] shrink-0" />
+                      <span>{w.phone}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1.5">
+                    <MapPin size={12} className="text-[#557e62] shrink-0" />
+                    <span>{w.city || "Bhopal"} ({w.serviceRadiusKm || 10} km radius)</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2 border-t border-[#e5ebe4]">
+                  <button
+                    onClick={() => setSelectedWorker(w)}
+                    className="btn btn-outline text-[#123b30] text-xs py-2 px-3 font-bold flex-1 flex items-center justify-center gap-1.5"
+                  >
+                    <Eye size={14} />
+                    <span>Profile</span>
+                  </button>
+                  <button
+                    onClick={(e) => handleDeleteWorker(e, w)}
+                    disabled={deletingId === w.id}
+                    className="btn border border-[#fecaca] text-[#dc2626] hover:bg-[#fef2f2] text-xs py-2 px-3 font-bold flex items-center justify-center gap-1.5 rounded-md"
+                  >
+                    <Trash2 size={14} />
+                    <span>Remove</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Workers Table (Desktop / Tablet) */}
+        <div className="homi-card overflow-hidden hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>

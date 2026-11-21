@@ -245,8 +245,96 @@ export default function AdminRequestsPage() {
           </div>
         </div>
 
-        {/* Requests Table */}
-        <div className="homi-card overflow-hidden">
+        {/* Mobile View: Stacked Request Cards */}
+        <div className="block md:hidden space-y-3">
+          {loading ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              <div className="w-6 h-6 border-2 border-[#123b30] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              Loading service requests...
+            </div>
+          ) : filteredRequests.length === 0 ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              No service requests found matching your filters.
+            </div>
+          ) : (
+            filteredRequests.map((r) => (
+              <div key={r.id} className="homi-card p-4 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-[#123b30] text-sm">#{r.id}</span>
+                    <span className="font-bold text-[11px] text-[#183c31] bg-[#f0f4ee] px-2 py-0.5 rounded capitalize">
+                      {r.category}
+                    </span>
+                  </div>
+                  <StatusBadge status={r.status} />
+                </div>
+
+                <div>
+                  <p className="font-extrabold text-[#123b30] text-xs">{r.customerName || "Customer"}</p>
+                  <p className="text-[11px] text-[#718078]">{r.customerPhone || "—"}</p>
+                </div>
+
+                <p className="text-xs text-[#41534a] line-clamp-2 bg-[#f8faf5] p-2.5 rounded-lg border border-[#e5ebe4]">
+                  {r.title || r.description}
+                </p>
+
+                <div className="flex items-center justify-between text-[11px] text-[#718078] pt-1">
+                  <div className="flex items-center gap-1">
+                    <MapPin size={12} className="text-[#557e62] shrink-0" />
+                    <span className="truncate max-w-[150px]">{r.locationLabel || r.city || "Bhopal"}</span>
+                  </div>
+                  <span>
+                    {new Date(r.createdAt).toLocaleDateString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                    })}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2 border-t border-[#e5ebe4]">
+                  {r.status === "pending_admin_review" && (
+                    <>
+                      <button
+                        onClick={() => handlePublish(r.id)}
+                        disabled={acting}
+                        className="btn btn-lime text-xs py-2 px-3 font-bold flex-1"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => { setSelectedReq(r); setShowRejectModal(true); }}
+                        disabled={acting}
+                        className="btn bg-[#fee2e2] text-[#991b1b] text-xs py-2 px-3 font-bold"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  {(r.status === "open_for_applications" || r.status === "open") && (
+                    <button
+                      type="button"
+                      onClick={() => handleOpenAssignModal(r)}
+                      className="btn btn-dark text-xs py-2 px-3 font-bold flex-1 flex items-center justify-center gap-1.5"
+                    >
+                      <UserCheck size={14} />
+                      <span>Assign</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setSelectedReq(r)}
+                    className="btn btn-outline text-[#123b30] text-xs py-2 px-3 font-bold flex-1 flex items-center justify-center gap-1.5"
+                  >
+                    <Eye size={14} />
+                    <span>Details</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Requests Table (Desktop / Tablet) */}
+        <div className="homi-card overflow-hidden hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>

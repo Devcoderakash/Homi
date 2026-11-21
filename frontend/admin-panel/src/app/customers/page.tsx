@@ -115,8 +115,80 @@ export default function CustomersPage() {
           />
         </div>
 
-        {/* Customers Table */}
-        <div className="homi-card overflow-hidden">
+        {/* Mobile View: Stacked Customer Cards */}
+        <div className="block md:hidden space-y-3">
+          {loading ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              <div className="w-6 h-6 border-2 border-[#123b30] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              Loading customers...
+            </div>
+          ) : paginatedCustomers.length === 0 ? (
+            <div className="homi-card p-6 text-center text-[#718078] text-xs">
+              No customers found.
+            </div>
+          ) : (
+            paginatedCustomers.map((c) => (
+              <div
+                key={c.id}
+                onClick={() => setSelectedCustomer(c)}
+                className="homi-card p-4 space-y-3 cursor-pointer"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-[#123b30] text-[#d9ed89] font-extrabold text-xs flex items-center justify-center shrink-0">
+                      {(c.fullName || c.name || c.email || "C").charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="font-extrabold text-[#123b30] text-sm">
+                        {c.fullName || c.name || "Customer"}
+                      </div>
+                      <div className="text-[11px] text-[#718078]">ID #{c.id}</div>
+                    </div>
+                  </div>
+                  <span className="badge bg-[#eaf5e5] text-[#285437] text-[10px] font-bold">
+                    Active
+                  </span>
+                </div>
+
+                <div className="space-y-1 text-xs text-[#41534a] pt-1">
+                  <div className="flex items-center gap-1.5">
+                    <Mail size={12} className="text-[#718078] shrink-0" />
+                    <span className="truncate">{c.email}</span>
+                  </div>
+                  {c.phone && (
+                    <div className="flex items-center gap-1.5">
+                      <Phone size={12} className="text-[#718078] shrink-0" />
+                      <span>{c.phone}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1.5">
+                    <MapPin size={12} className="text-[#557e62] shrink-0" />
+                    <span>{c.city || c.address || "Bhopal"}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-[#e5ebe4] text-xs">
+                  <span className="text-[11px] text-[#718078]">
+                    Joined: {c.createdAt ? formatDate(c.createdAt) : "—"}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedCustomer(c);
+                    }}
+                    className="btn btn-outline text-[#123b30] text-xs py-1.5 px-3 font-bold inline-flex items-center gap-1"
+                  >
+                    <Eye size={12} />
+                    <span>View Profile</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Customers Table (Desktop / Tablet) */}
+        <div className="homi-card overflow-hidden hidden md:block">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
