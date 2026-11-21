@@ -189,8 +189,8 @@ export default function RequestDetailsPage() {
   const load = useCallback(async () => {
     try {
       const response = await fetch(`/api/requests/${id}`, { cache: "no-store" });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error);
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || (response.status >= 500 ? "Server is starting up. Please refresh in a moment." : t("errorServer")));
       setData({
         ...body,
         request: body.request,
@@ -255,8 +255,8 @@ export default function RequestDetailsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action, ...payload }),
       });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error);
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || "Action could not be completed. Please try again.");
       if (action === "message") setMessage("");
       if (action === "release") {
         window.location.assign("/worker");

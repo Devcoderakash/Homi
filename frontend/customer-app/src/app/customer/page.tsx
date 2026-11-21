@@ -13,7 +13,7 @@ function CustomerContent() {
   const { user, loading } = useCurrentUser(); const { language, t } = useLanguage(); const { a } = useAppCopy(); const { s } = useServiceCopy(); const params = useSearchParams();
   const [tab, setTab] = useState("all"), [busy, setBusy] = useState<number | null>(null), [error, setError] = useState("");
   const board = useRequestBoard(Boolean(user), tab);
-  async function cancel(id: number) { if (busy || !window.confirm(t("cancelConfirm"))) return; setBusy(id); setError(""); try { const response = await fetch(`/api/requests/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "cancel" }) }); const body = await response.json(); if (!response.ok) throw new Error(body.error); await board.reload(); } catch (err) { setError(err instanceof Error ? err.message : t("errorServer")); } finally { setBusy(null); } }
+  async function cancel(id: number) { if (busy || !window.confirm(t("cancelConfirm"))) return; setBusy(id); setError(""); try { const response = await fetch(`/api/requests/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "cancel" }) }); const body = await response.json().catch(() => ({})); if (!response.ok) throw new Error(body.error || t("errorServer")); await board.reload(); } catch (err) { setError(err instanceof Error ? err.message : t("errorServer")); } finally { setBusy(null); } }
   if (loading) return <div className="page-loading">{t("loading")}</div>;
   if (!user || (user.role !== "customer" && user.role !== "admin")) return <DashboardGuard role="customer"/>;
   const filtered = Boolean(board.search || board.category);

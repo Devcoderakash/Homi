@@ -80,8 +80,8 @@ function BookContent() {
     try {
       if (!submitKey.current) submitKey.current = crypto.randomUUID();
       const response = await fetch("/api/requests", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, ...locationPayload(location), language, demo, clientKey: submitKey.current, requestedWorkerId: preferredWorkerId ? Number(preferredWorkerId) : null, preferredDate: timing === "schedule" ? form.preferredDate : indianDate(), preferredTime: timing === "schedule" ? form.preferredTime : timing === "today" ? "Any time today" : "As soon as possible" }) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.code ? t(data.code as TranslationKey) : data.error || t("errorServer"));
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.code ? t(data.code as TranslationKey) : data.error || (response.status >= 500 ? "Server is waking up. Please tap 'Send my request' again in a moment." : t("errorServer")));
       setPhotoWarning("");
       if (photos.length) {
         setUploadingPhotos(true);
