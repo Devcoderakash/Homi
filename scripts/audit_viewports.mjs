@@ -4,11 +4,15 @@ import path from "path";
 
 const VIEWPORTS = [
   { name: "Small-Mobile-320", width: 320, height: 568, isMobile: true, hasTouch: true },
-  { name: "Standard-Mobile-390", width: 390, height: 844, isMobile: true, hasTouch: true },
-  { name: "Large-Mobile-600", width: 600, height: 960, isMobile: true, hasTouch: true },
+  { name: "Standard-Mobile-360", width: 360, height: 740, isMobile: true, hasTouch: true },
+  { name: "Large-Mobile-390", width: 390, height: 844, isMobile: true, hasTouch: true },
+  { name: "Modern-Mobile-430", width: 430, height: 932, isMobile: true, hasTouch: true },
+  { name: "Small-Tablet-640", width: 640, height: 960, isMobile: true, hasTouch: true },
   { name: "Tablet-768", width: 768, height: 1024, isMobile: true, hasTouch: true },
-  { name: "Laptop-1280", width: 1280, height: 800, isMobile: false, hasTouch: false },
-  { name: "Desktop-1440", width: 1440, height: 900, isMobile: false, hasTouch: false },
+  { name: "Laptop-1024", width: 1024, height: 768, isMobile: false, hasTouch: false },
+  { name: "Desktop-1280", width: 1280, height: 800, isMobile: false, hasTouch: false },
+  { name: "Large-Desktop-1440", width: 1440, height: 900, isMobile: false, hasTouch: false },
+  { name: "Wide-Desktop-1920", width: 1920, height: 1080, isMobile: false, hasTouch: false },
 ];
 
 const PAGES = [

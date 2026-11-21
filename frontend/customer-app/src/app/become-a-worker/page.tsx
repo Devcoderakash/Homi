@@ -90,93 +90,49 @@ export default function BecomeAWorkerPage() {
     <>
       <Header />
       <main className="inner-page">
-        <div className="container" style={{ maxWidth: 840, margin: "0 auto", padding: "40px 20px" }}>
+        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           {submittedData ? (
             /* Confirmation Screen */
-            <div
-              style={{
-                background: "#ffffff",
-                border: "1px solid #e5ebe4",
-                borderRadius: 16,
-                padding: "48px 36px",
-                textAlign: "center",
-                boxShadow: "0 10px 30px rgba(18, 59, 48, 0.06)",
-              }}
-            >
-              <div
-                style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: "50%",
-                  background: "#eaf3dd",
-                  color: "#225746",
-                  display: "grid",
-                  placeItems: "center",
-                  margin: "0 auto 24px",
-                }}
-              >
-                <CheckCircle2 size={40} />
+            <div className="bg-white border border-[#e5ebe4] rounded-2xl p-6 sm:p-10 md:p-12 text-center shadow-sm">
+              <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-[#eaf3dd] text-[#225746] grid place-items-center mx-auto mb-5 sm:mb-6">
+                <CheckCircle2 size={36} className="sm:w-10 sm:h-10" />
               </div>
 
-              <span
-                style={{
-                  display: "inline-block",
-                  padding: "6px 14px",
-                  borderRadius: 30,
-                  fontSize: 12,
-                  fontWeight: 800,
-                  letterSpacing: "0.08em",
-                  background: "#fff5dc",
-                  color: "#a47627",
-                  marginBottom: 16,
-                }}
-              >
+              <span className="inline-block px-3.5 py-1.5 rounded-full text-xs font-extrabold tracking-wider bg-[#fff5dc] text-[#a47627] mb-4 uppercase">
                 STATUS: {submittedData.status}
               </span>
 
-              <h1 style={{ fontSize: 32, fontWeight: 800, color: "#123b30", margin: "0 0 12px" }}>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#123b30] mb-3">
                 Application Received!
               </h1>
-              <p style={{ color: "#718078", fontSize: 16, maxWidth: 540, margin: "0 auto 24px", lineHeight: 1.6 }}>
+              <p className="text-sm sm:text-base text-[#718078] max-w-lg mx-auto mb-6 leading-relaxed">
                 Thank you, <strong>{submittedData.name}</strong>. Your application as a <strong>{submittedData.specialty}</strong> in <strong>{submittedData.city}</strong> has been saved.
               </p>
 
-              <div
-                style={{
-                  background: "#f8faf5",
-                  border: "1px solid #e5ebe4",
-                  borderRadius: 12,
-                  padding: "20px 24px",
-                  maxWidth: 480,
-                  margin: "0 auto 32px",
-                  textAlign: "left",
-                  fontSize: 14,
-                  color: "#243b32",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ color: "#718078" }}>Application ID:</span>
-                  <strong>#{submittedData.applicationId}</strong>
+              <div className="bg-[#f8faf5] border border-[#e5ebe4] rounded-xl p-4 sm:p-6 max-w-md mx-auto mb-6 sm:mb-8 text-left text-xs sm:text-sm text-[#243b32] space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <span className="text-[#718078]">Application ID:</span>
+                  <strong className="font-mono">#{submittedData.applicationId}</strong>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ color: "#718078" }}>Service Category:</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#718078]">Service Category:</span>
                   <strong>{submittedData.specialty}</strong>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#718078" }}>Review Status:</span>
-                  <span style={{ color: "#a47627", fontWeight: 700 }}>Pending Admin Review</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-[#718078]">Review Status:</span>
+                  <span className="text-[#a47627] font-extrabold">Pending Admin Review</span>
                 </div>
               </div>
 
-              <p style={{ fontSize: 13, color: "#8a998d", maxWidth: 500, margin: "0 auto 32px", lineHeight: 1.6 }}>
+              <p className="text-xs sm:text-sm text-[#8a998d] max-w-md mx-auto mb-6 sm:mb-8 leading-relaxed">
                 Our team verifies every service professional to maintain trust for families. We will contact you on your registered mobile number for document verification.
               </p>
 
-              <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-                <Link href="/" className="btn btn-dark" style={{ padding: "14px 24px" }}>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href="/" className="btn btn-dark w-full sm:w-auto py-3 px-6 text-sm font-bold min-h-[44px]">
                   Back to Home
                 </Link>
-                <Link href="/workers" className="btn btn-lime" style={{ padding: "14px 24px" }}>
+                <Link href="/workers" className="btn btn-lime w-full sm:w-auto py-3 px-6 text-sm font-bold min-h-[44px]">
                   Explore Workers Directory <ArrowRight size={16} />
                 </Link>
               </div>
@@ -185,23 +141,14 @@ export default function BecomeAWorkerPage() {
             /* Application Form */
             <div>
               {/* Heading */}
-              <div style={{ marginBottom: 36, textAlign: "center" }}>
-                <span
-                  style={{
-                    display: "inline-block",
-                    fontSize: 11,
-                    fontWeight: 800,
-                    letterSpacing: "0.15em",
-                    color: "#557e62",
-                    marginBottom: 10,
-                  }}
-                >
+              <div className="mb-6 sm:mb-9 text-center">
+                <span className="inline-block text-xs font-extrabold tracking-widest text-[#557e62] mb-2 uppercase">
                   JOIN AS A LOCAL SERVICE PROFESSIONAL
                 </span>
-                <h1 style={{ fontSize: "clamp(32px, 3.8vw, 46px)", fontWeight: 800, color: "#123b30", margin: "0 0 14px", lineHeight: 1.18 }}>
+                <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-[#123b30] mb-3 leading-tight tracking-tight">
                   Aapka hunar. Apne shehar mein kaam.
                 </h1>
-                <p style={{ fontSize: 16, color: "#718078", maxWidth: 580, margin: "0 auto", lineHeight: 1.6 }}>
+                <p className="text-sm sm:text-base text-[#718078] max-w-xl mx-auto leading-relaxed">
                   Join Homi as a local service professional. Share your skills and experience with us.
                 </p>
               </div>
@@ -209,93 +156,92 @@ export default function BecomeAWorkerPage() {
               {/* Form Card */}
               <form
                 onSubmit={handleSubmit}
-                style={{
-                  background: "#ffffff",
-                  border: "1px solid #e5ebe4",
-                  borderRadius: 16,
-                  padding: "40px",
-                  boxShadow: "0 12px 36px rgba(18, 59, 48, 0.05)",
-                }}
+                className="bg-white border border-[#e5ebe4] rounded-2xl p-5 sm:p-8 md:p-10 shadow-sm"
               >
                 {error && (
-                  <div
-                    style={{
-                      background: "#fff0ed",
-                      color: "#ad4435",
-                      border: "1px solid #f5c9c2",
-                      borderRadius: 10,
-                      padding: "14px 18px",
-                      fontSize: 13,
-                      marginBottom: 24,
-                    }}
-                  >
+                  <div className="bg-[#fff0ed] text-[#ad4435] border border-[#f5c9c2] rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm mb-6">
                     {error}
                   </div>
                 )}
 
                 {/* Section 1: Personal Details */}
-                <div style={{ marginBottom: 32, paddingBottom: 28, borderBottom: "1px solid #eef1ed" }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 800, color: "#123b30", margin: "0 0 6px" }}>
+                <div className="mb-7 sm:mb-8 pb-6 sm:pb-7 border-b border-[#eef1ed]">
+                  <h2 className="text-base sm:text-lg font-extrabold text-[#123b30] mb-1">
                     1. Personal Details
                   </h2>
-                  <p style={{ fontSize: 13, color: "#8a998d", margin: "0 0 20px" }}>
+                  <p className="text-xs sm:text-sm text-[#8a998d] mb-4 sm:mb-5">
                     Your primary contact information for customer communication.
                   </p>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                     <div className="form-field">
-                      <label>Full Name *</label>
+                      <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                        Full Name *
+                      </label>
                       <input
                         required
                         type="text"
+                        autoComplete="name"
                         placeholder="e.g. Ramesh Kumar Sharma"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
+                        className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[46px]"
                       />
                     </div>
 
                     <div className="form-field">
-                      <label>Mobile Number (10 Digits) *</label>
+                      <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                        Mobile Number (10 Digits) *
+                      </label>
                       <input
                         required
                         type="tel"
+                        inputMode="tel"
+                        autoComplete="tel-national"
                         maxLength={10}
                         placeholder="e.g. 9826012345"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                        className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[46px]"
                       />
                     </div>
                   </div>
 
-                  <div className="form-field" style={{ marginTop: 16 }}>
-                    <label>Email Address (Optional)</label>
+                  <div className="form-field mt-4">
+                    <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                      Email Address (Optional)
+                    </label>
                     <input
                       type="email"
+                      autoComplete="email"
                       placeholder="e.g. ramesh@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[46px]"
                     />
                   </div>
                 </div>
 
                 {/* Section 2: Service & Skills */}
-                <div style={{ marginBottom: 32, paddingBottom: 28, borderBottom: "1px solid #eef1ed" }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 800, color: "#123b30", margin: "0 0 6px" }}>
+                <div className="mb-7 sm:mb-8 pb-6 sm:pb-7 border-b border-[#eef1ed]">
+                  <h2 className="text-base sm:text-lg font-extrabold text-[#123b30] mb-1">
                     2. Service Category & Skills
                   </h2>
-                  <p style={{ fontSize: 13, color: "#8a998d", margin: "0 0 20px" }}>
+                  <p className="text-xs sm:text-sm text-[#8a998d] mb-4 sm:mb-5">
                     Select your primary trade and tell us your experience.
                   </p>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 18 }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                     <div className="form-field">
-                      <label>Primary Service Category *</label>
-                      <div style={{ position: "relative" }}>
+                      <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                        Primary Service Category *
+                      </label>
+                      <div className="relative">
                         <select
                           required
                           value={category}
                           onChange={(e) => setCategory(e.target.value)}
-                          style={{ appearance: "none", cursor: "pointer", paddingRight: 36 }}
+                          className="w-full border border-[#e1e8df] rounded-lg p-3 pr-10 text-sm text-[#294337] bg-white outline-none focus:border-[#92b777] min-h-[46px] appearance-none cursor-pointer"
                         >
                           {services.map((s) => (
                             <option key={s.name} value={s.name}>
@@ -303,12 +249,14 @@ export default function BecomeAWorkerPage() {
                             </option>
                           ))}
                         </select>
-                        <ChevronDown size={16} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "#718078" }} />
+                        <ChevronDown size={16} className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#718078]" />
                       </div>
                     </div>
 
                     <div className="form-field">
-                      <label>Experience (Years) *</label>
+                      <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                        Experience (Years) *
+                      </label>
                       <input
                         required
                         type="number"
@@ -317,97 +265,106 @@ export default function BecomeAWorkerPage() {
                         placeholder="e.g. 5"
                         value={experienceYears}
                         onChange={(e) => setExperienceYears(e.target.value)}
+                        className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[46px]"
                       />
                     </div>
                   </div>
 
-                  <div className="form-field" style={{ marginTop: 16 }}>
-                    <label>Skills & Specializations</label>
+                  <div className="form-field mt-4">
+                    <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                      Skills & Specializations
+                    </label>
                     <input
                       type="text"
                       placeholder="e.g. Pipe leaks, bathroom fitting, sanitary installations, water motor repair"
                       value={skills}
                       onChange={(e) => setSkills(e.target.value)}
+                      className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[46px]"
                     />
                   </div>
 
-                  <div className="form-field" style={{ marginTop: 16 }}>
-                    <label>Short Introduction (Bio)</label>
+                  <div className="form-field mt-4">
+                    <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                      Short Introduction (Bio)
+                    </label>
                     <textarea
                       rows={3}
                       placeholder="Tell customers briefly about your work background, reliability and quality of work..."
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
+                      className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[85px] resize-y"
                     />
                   </div>
                 </div>
 
                 {/* Section 3: Location */}
-                <div style={{ marginBottom: 32, paddingBottom: 28, borderBottom: "1px solid #eef1ed" }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 800, color: "#123b30", margin: "0 0 6px" }}>
+                <div className="mb-7 sm:mb-8 pb-6 sm:pb-7 border-b border-[#eef1ed]">
+                  <h2 className="text-base sm:text-lg font-extrabold text-[#123b30] mb-1">
                     3. Work Location
                   </h2>
-                  <p style={{ fontSize: 13, color: "#8a998d", margin: "0 0 20px" }}>
+                  <p className="text-xs sm:text-sm text-[#8a998d] mb-4 sm:mb-5">
                     Where do you live and offer your home repair services?
                   </p>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                     <div className="form-field">
-                      <label>City *</label>
+                      <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                        City *
+                      </label>
                       <input
                         required
                         type="text"
+                        autoComplete="address-level2"
                         placeholder="e.g. Bhopal"
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
+                        className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[46px]"
                       />
                     </div>
 
                     <div className="form-field">
-                      <label>Area / Locality *</label>
+                      <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                        Area / Locality *
+                      </label>
                       <input
                         required
                         type="text"
+                        autoComplete="address-line2"
                         placeholder="e.g. MP Nagar, Arera Colony"
                         value={area}
                         onChange={(e) => setArea(e.target.value)}
+                        className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[46px]"
                       />
                     </div>
                   </div>
 
-                  <div className="form-field" style={{ marginTop: 16 }}>
-                    <label>Full Address</label>
+                  <div className="form-field mt-4">
+                    <label className="block text-xs font-extrabold text-[#345044] mb-2">
+                      Full Address
+                    </label>
                     <input
                       type="text"
+                      autoComplete="street-address"
                       placeholder="e.g. House No. 24, Zone 2, MP Nagar, Bhopal"
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
+                      className="w-full border border-[#e1e8df] rounded-lg p-3 text-sm text-[#294337] outline-none focus:border-[#92b777] min-h-[46px]"
                     />
                   </div>
                 </div>
 
-                {/* Section 4: Verification (Optional / Trade info) */}
-                <div style={{ marginBottom: 32 }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 800, color: "#123b30", margin: "0 0 6px" }}>
+                {/* Section 4: Verification */}
+                <div className="mb-7 sm:mb-8">
+                  <h2 className="text-base sm:text-lg font-extrabold text-[#123b30] mb-1">
                     4. Profile & Verification
                   </h2>
-                  <p style={{ fontSize: 13, color: "#8a998d", margin: "0 0 16px" }}>
-                    Optional trade or identification documents (e.g. Aadhaar / ITI trade certificate).
+                  <p className="text-xs sm:text-sm text-[#8a998d] mb-4">
+                    Trade or identification documents (e.g. Aadhaar / ITI trade certificate).
                   </p>
 
-                  <div
-                    style={{
-                      background: "#f8faf5",
-                      border: "1px dashed #d5ded4",
-                      borderRadius: 12,
-                      padding: "20px",
-                      textAlign: "center",
-                      color: "#6b8073",
-                      fontSize: 13,
-                    }}
-                  >
-                    <FileCheck size={28} style={{ margin: "0 auto 8px", color: "#4f7a50" }} />
-                    <strong style={{ display: "block", color: "#243b32", marginBottom: 4 }}>
+                  <div className="bg-[#f8faf5] border border-dashed border-[#d5ded4] rounded-xl p-4 sm:p-5 text-center text-xs sm:text-sm text-[#6b8073]">
+                    <FileCheck size={28} className="mx-auto mb-2 text-[#4f7a50]" />
+                    <strong className="block text-[#243b32] mb-1 font-bold">
                       Verification in Person / Over Phone
                     </strong>
                     <span>
@@ -420,19 +377,12 @@ export default function BecomeAWorkerPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn btn-dark"
-                  style={{
-                    width: "100%",
-                    height: 52,
-                    fontSize: 16,
-                    fontWeight: 800,
-                    letterSpacing: "-0.01em",
-                  }}
+                  className="btn btn-dark w-full min-h-[50px] text-sm sm:text-base font-extrabold tracking-wide flex items-center justify-center gap-2 rounded-xl shadow-xs"
                 >
                   {loading ? "Submitting Application…" : "Apply as a Worker →"}
                 </button>
 
-                <p style={{ fontSize: 12, color: "#8a998d", textAlign: "center", marginTop: 16, lineHeight: 1.5 }}>
+                <p className="text-xs text-[#8a998d] text-center mt-4 leading-relaxed">
                   By applying, you agree to connect honestly with households and respect fair pricing guidelines.
                 </p>
               </form>

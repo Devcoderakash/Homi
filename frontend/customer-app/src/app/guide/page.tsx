@@ -19,9 +19,9 @@ export default function GuidePage() {
     <>
       <Header />
       <main className="inner-page">
-        <div className="container" style={{ maxWidth: 840, margin: "0 auto", padding: "48px 20px 80px" }}>
+        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
           {/* Header */}
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <div className="text-center mb-8 sm:mb-12">
             <span
               style={{
                 display: "inline-block",
@@ -34,57 +34,46 @@ export default function GuidePage() {
             >
               START HERE
             </span>
-            <h1 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800, color: "#123b30", margin: "0 0 14px", lineHeight: 1.18 }}>
+            <h1 style={{ fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 800, color: "#123b30", margin: "0 0 14px", lineHeight: 1.18 }}>
               No long forms. No running around.
             </h1>
-            <p style={{ fontSize: 16, color: "#718078", maxWidth: 560, margin: "0 auto", lineHeight: 1.6 }}>
+            <p style={{ fontSize: 15, color: "#718078", maxWidth: 560, margin: "0 auto", lineHeight: 1.6 }}>
               Three simple steps to connect with trusted local service professionals in your neighbourhood.
             </p>
           </div>
 
           {/* Three Simple Steps */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20, marginBottom: 48 }}>
+          <div className="flex flex-col gap-5 sm:gap-6 mb-10 sm:mb-12">
             {/* Step 1 */}
-            <div
-              style={{
-                background: "#ffffff",
-                border: "1px solid #e5ebe4",
-                borderRadius: 16,
-                padding: "32px",
-                display: "flex",
-                gap: 24,
-                alignItems: "flex-start",
-                boxShadow: "0 8px 24px rgba(18, 59, 48, 0.04)",
-              }}
-            >
+            <div className="bg-white border border-[#e5ebe4] rounded-2xl p-5 sm:p-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start shadow-sm">
               <div
                 style={{
-                  width: 52,
-                  height: 52,
+                  width: 48,
+                  height: 48,
                   borderRadius: 14,
                   background: "#eaf3dd",
                   color: "#225746",
                   display: "grid",
                   placeItems: "center",
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: 800,
                   flexShrink: 0,
                 }}
               >
                 01
               </div>
-              <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: "#123b30", margin: "0 0 8px" }}>
+              <div className="flex-1 min-w-0">
+                <h2 style={{ fontSize: 18, fontWeight: 800, color: "#123b30", margin: "0 0 8px" }}>
                   1. Tell us the problem.
                 </h2>
-                <p style={{ fontSize: 14, color: "#718078", lineHeight: 1.65, margin: "0 0 16px" }}>
+                <p style={{ fontSize: 14, color: "#718078", lineHeight: 1.65, margin: "0 0 14px" }}>
                   Choose a service category (Plumber, Electrician, Carpenter, etc.), describe what needs repair, and enter your city or area. No account creation or payment is needed to send a request.
                 </p>
-                <div style={{ display: "flex", gap: 12, fontSize: 12, color: "#457252", fontWeight: 700 }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div className="flex flex-wrap gap-2.5 sm:gap-3 text-xs text-[#457252] font-bold">
+                  <span className="flex items-center gap-1.5">
                     <Check size={16} /> Fast 1-minute form
                   </span>
-                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span className="flex items-center gap-1.5">
                     <Check size={16} /> In your own language
                   </span>
                 </div>
@@ -92,46 +81,35 @@ export default function GuidePage() {
             </div>
 
             {/* Step 2 */}
-            <div
-              style={{
-                background: "#ffffff",
-                border: "1px solid #e5ebe4",
-                borderRadius: 16,
-                padding: "32px",
-                display: "flex",
-                gap: 24,
-                alignItems: "flex-start",
-                boxShadow: "0 8px 24px rgba(18, 59, 48, 0.04)",
-              }}
-            >
+            <div className="bg-white border border-[#e5ebe4] rounded-2xl p-5 sm:p-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start shadow-sm">
               <div
                 style={{
-                  width: 52,
-                  height: 52,
+                  width: 48,
+                  height: 48,
                   borderRadius: 14,
                   background: "#fff0d8",
                   color: "#996316",
                   display: "grid",
                   placeItems: "center",
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: 800,
                   flexShrink: 0,
                 }}
               >
                 02
               </div>
-              <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: "#123b30", margin: "0 0 8px" }}>
+              <div className="flex-1 min-w-0">
+                <h2 style={{ fontSize: 18, fontWeight: 800, color: "#123b30", margin: "0 0 8px" }}>
                   2. We help connect you.
                 </h2>
-                <p style={{ fontSize: 14, color: "#718078", lineHeight: 1.65, margin: "0 0 16px" }}>
+                <p style={{ fontSize: 14, color: "#718078", lineHeight: 1.65, margin: "0 0 14px" }}>
                   Your request is immediately received and reviewed by the Homi team. An approved technician located in your neighbourhood will be assigned or contact you to confirm visiting details and price.
                 </p>
-                <div style={{ display: "flex", gap: 12, fontSize: 12, color: "#457252", fontWeight: 700 }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div className="flex flex-wrap gap-2.5 sm:gap-3 text-xs text-[#457252] font-bold">
+                  <span className="flex items-center gap-1.5">
                     <Check size={16} /> Verified local professionals
                   </span>
-                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span className="flex items-center gap-1.5">
                     <Check size={16} /> Direct phone contact
                   </span>
                 </div>
@@ -139,46 +117,35 @@ export default function GuidePage() {
             </div>
 
             {/* Step 3 */}
-            <div
-              style={{
-                background: "#ffffff",
-                border: "1px solid #e5ebe4",
-                borderRadius: 16,
-                padding: "32px",
-                display: "flex",
-                gap: 24,
-                alignItems: "flex-start",
-                boxShadow: "0 8px 24px rgba(18, 59, 48, 0.04)",
-              }}
-            >
+            <div className="bg-white border border-[#e5ebe4] rounded-2xl p-5 sm:p-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start shadow-sm">
               <div
                 style={{
-                  width: 52,
-                  height: 52,
+                  width: 48,
+                  height: 48,
                   borderRadius: 14,
                   background: "#e2f2e8",
                   color: "#1c5737",
                   display: "grid",
                   placeItems: "center",
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: 800,
                   flexShrink: 0,
                 }}
               >
                 03
               </div>
-              <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: "#123b30", margin: "0 0 8px" }}>
+              <div className="flex-1 min-w-0">
+                <h2 style={{ fontSize: 18, fontWeight: 800, color: "#123b30", margin: "0 0 8px" }}>
                   3. Track your request.
                 </h2>
-                <p style={{ fontSize: 14, color: "#718078", lineHeight: 1.65, margin: "0 0 16px" }}>
+                <p style={{ fontSize: 14, color: "#718078", lineHeight: 1.65, margin: "0 0 14px" }}>
                   Log in to your customer dashboard anytime to check the latest status of your service request, see assigned technician details, and leave feedback once the job is completed.
                 </p>
-                <div style={{ display: "flex", gap: 12, fontSize: 12, color: "#457252", fontWeight: 700 }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div className="flex flex-wrap gap-2.5 sm:gap-3 text-xs text-[#457252] font-bold">
+                  <span className="flex items-center gap-1.5">
                     <Check size={16} /> Real-time status tracking
                   </span>
-                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span className="flex items-center gap-1.5">
                     <Check size={16} /> Clear audit history
                   </span>
                 </div>
@@ -198,48 +165,38 @@ export default function GuidePage() {
           </div>
 
           {/* Trust Guarantees */}
-          <div
-            style={{
-              background: "#ffffff",
-              border: "1px solid #e5ebe4",
-              borderRadius: 16,
-              padding: "28px 32px",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: 24,
-            }}
-          >
-            <div style={{ display: "flex", gap: 12 }}>
-              <ShieldCheck size={24} style={{ color: "#366e44", flexShrink: 0 }} />
+          <div className="bg-white border border-[#e5ebe4] rounded-2xl p-5 sm:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+            <div className="flex items-start gap-3">
+              <ShieldCheck size={24} className="text-[#366e44] shrink-0 mt-0.5" />
               <div>
-                <strong style={{ display: "block", fontSize: 14, color: "#123b30", marginBottom: 3 }}>
+                <strong className="block text-sm text-[#123b30] mb-1 font-extrabold">
                   Verified Identity
                 </strong>
-                <span style={{ fontSize: 12, color: "#718078", lineHeight: 1.5 }}>
+                <span className="text-xs text-[#718078] leading-relaxed">
                   Every technician is vetted and phone-verified before taking jobs.
                 </span>
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: 12 }}>
-              <IndianRupee size={24} style={{ color: "#366e44", flexShrink: 0 }} />
+            <div className="flex items-start gap-3">
+              <IndianRupee size={24} className="text-[#366e44] shrink-0 mt-0.5" />
               <div>
-                <strong style={{ display: "block", fontSize: 14, color: "#123b30", marginBottom: 3 }}>
+                <strong className="block text-sm text-[#123b30] mb-1 font-extrabold">
                   Agree Price First
                 </strong>
-                <span style={{ fontSize: 12, color: "#718078", lineHeight: 1.5 }}>
+                <span className="text-xs text-[#718078] leading-relaxed">
                   No hidden charges. Review charges before work starts.
                 </span>
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: 12 }}>
-              <Phone size={24} style={{ color: "#366e44", flexShrink: 0 }} />
+            <div className="flex items-start gap-3">
+              <Phone size={24} className="text-[#366e44] shrink-0 mt-0.5" />
               <div>
-                <strong style={{ display: "block", fontSize: 14, color: "#123b30", marginBottom: 3 }}>
+                <strong className="block text-sm text-[#123b30] mb-1 font-extrabold">
                   Direct Support
                 </strong>
-                <span style={{ fontSize: 12, color: "#718078", lineHeight: 1.5 }}>
+                <span className="text-xs text-[#718078] leading-relaxed">
                   The Homi team is available to help resolve any questions.
                 </span>
               </div>

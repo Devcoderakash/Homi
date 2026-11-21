@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowRight, Armchair, Droplets, Fan, Hammer, House, Menu, PaintRoller, PlugZap, Sparkles, Wrench, X } from "lucide-react";
+import { ArrowRight, Armchair, Droplets, Fan, Hammer, House, Menu, PaintRoller, PlugZap, Sparkles, Wrench, X, Users, Briefcase, FileText, User, ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { LanguagePicker, useAppCopy, useLanguage } from "@/components/language";
 import { useReportCopy } from "@/components/report-language";
@@ -171,50 +171,203 @@ export function Header() {
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
-    <header className="site-header">
-      <div className="container header-inner">
-        <Logo />
-        <nav className={`header-nav ${menuOpen ? "open" : ""}`} aria-label="Main navigation">
-          <Link onClick={() => setMenuOpen(false)} href="/#services">Services</Link>
-          <Link onClick={() => setMenuOpen(false)} href="/workers">Find Local Workers</Link>
-          <Link onClick={() => setMenuOpen(false)} href="/become-a-worker">I Am a Worker</Link>
-          <Link onClick={() => setMenuOpen(false)} href="/guide">Start Here</Link>
-          {user && (
-            <Link onClick={() => setMenuOpen(false)} href="/customer" className="mobile-only">
-              My Requests
+    <>
+      <header className="site-header">
+        <div className="container header-inner">
+          <Logo />
+          
+          {/* Desktop Navigation */}
+          <nav className="header-nav hidden lg:flex" aria-label="Main navigation">
+            <Link href="/#services">Services</Link>
+            <Link href="/workers">Find Local Workers</Link>
+            <Link href="/become-a-worker">I Am a Worker</Link>
+            <Link href="/guide">Start Here</Link>
+          </nav>
+
+          <div className="header-actions">
+            <div className="hidden sm:inline-flex">
+              <LanguagePicker />
+            </div>
+            <Link
+              href={user ? "/customer" : "/login"}
+              className="header-account hidden sm:inline-flex"
+            >
+              {user ? (user.name ? user.name.split(" ")[0] : "Dashboard") : "Sign In"}
             </Link>
-          )}
-          <Link
-            onClick={() => setMenuOpen(false)}
-            href={user ? "/customer" : "/login"}
-            className="mobile-only"
+            <Link href="/book" className="btn btn-dark header-cta hidden sm:inline-flex">
+              {t("sendRequest")} <ArrowRight size={16} />
+            </Link>
+            
+            {/* Mobile Hamburger Toggle */}
+            <button
+              className="menu-button"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={menuOpen}
+              style={{
+                width: 44,
+                height: 44,
+                display: "inline-grid",
+                placeItems: "center",
+                background: "transparent",
+                border: 0,
+                color: "#123b30",
+                cursor: "pointer",
+                borderRadius: 8,
+              }}
+            >
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Drawer Backdrop */}
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs lg:hidden transition-opacity"
+          onClick={closeMenu}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile Drawer Panel */}
+      <div
+        className={`fixed top-0 right-0 bottom-0 z-50 w-72 max-w-[85vw] bg-white text-[#183c31] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+        style={{
+          paddingTop: "max(16px, env(safe-area-inset-top))",
+          paddingBottom: "max(16px, env(safe-area-inset-bottom))",
+        }}
+        aria-modal="true"
+        role="dialog"
+      >
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5ebe4]">
+          <Logo />
+          <button
+            onClick={closeMenu}
+            className="p-2 -mr-2 text-[#718078] hover:text-[#123b30] rounded-lg transition-colors"
+            aria-label="Close menu"
+            style={{ width: 44, height: 44, display: "grid", placeItems: "center" }}
           >
-            {user ? (user.name ? user.name.split(" ")[0] : "Dashboard") : "Sign In"}
-          </Link>
-        </nav>
-        <div className="header-actions">
-          <LanguagePicker />
+            <X size={22} />
+          </button>
+        </div>
+
+        {/* Drawer Links */}
+        <div className="flex-1 overflow-y-auto px-4 py-5 space-y-1.5">
           <Link
-            href={user ? "/customer" : "/login"}
-            className="header-account"
+            onClick={closeMenu}
+            href="/#services"
+            className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold text-[#183c31] hover:bg-[#f0f4ee] transition-colors min-h-[48px]"
           >
-            {user ? (user.name ? user.name.split(" ")[0] : "Dashboard") : "Sign In"}
+            <div className="flex items-center gap-3">
+              <Wrench size={18} className="text-[#557e62]" />
+              <span>Services</span>
+            </div>
+            <ChevronRight size={16} className="text-[#a0b0a4]" />
           </Link>
-          <Link href="/book" className="btn btn-dark header-cta">
-            {t("sendRequest")} <ArrowRight size={16} />
+          
+          <Link
+            onClick={closeMenu}
+            href="/workers"
+            className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold text-[#183c31] hover:bg-[#f0f4ee] transition-colors min-h-[48px]"
+          >
+            <div className="flex items-center gap-3">
+              <Users size={18} className="text-[#557e62]" />
+              <span>Find Local Workers</span>
+            </div>
+            <ChevronRight size={16} className="text-[#a0b0a4]" />
+          </Link>
+
+          <Link
+            onClick={closeMenu}
+            href="/become-a-worker"
+            className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold text-[#183c31] hover:bg-[#f0f4ee] transition-colors min-h-[48px]"
+          >
+            <div className="flex items-center gap-3">
+              <Briefcase size={18} className="text-[#557e62]" />
+              <span>I Am a Worker</span>
+            </div>
+            <ChevronRight size={16} className="text-[#a0b0a4]" />
+          </Link>
+
+          <Link
+            onClick={closeMenu}
+            href="/guide"
+            className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold text-[#183c31] hover:bg-[#f0f4ee] transition-colors min-h-[48px]"
+          >
+            <div className="flex items-center gap-3">
+              <Sparkles size={18} className="text-[#557e62]" />
+              <span>Start Here</span>
+            </div>
+            <ChevronRight size={16} className="text-[#a0b0a4]" />
+          </Link>
+
+          <div className="pt-3 border-t border-[#e5ebe4]">
+            {user ? (
+              <Link
+                onClick={closeMenu}
+                href="/customer"
+                className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-extrabold text-[#123b30] bg-[#f0f4ee] transition-colors min-h-[48px]"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-full bg-[#123b30] text-[#d9ed89] text-[11px] flex items-center justify-center font-bold">
+                    {(user.name || "U").charAt(0).toUpperCase()}
+                  </div>
+                  <span>Customer Dashboard</span>
+                </div>
+                <ChevronRight size={16} className="text-[#557e62]" />
+              </Link>
+            ) : (
+              <Link
+                onClick={closeMenu}
+                href="/login"
+                className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold text-[#183c31] hover:bg-[#f0f4ee] transition-colors min-h-[48px]"
+              >
+                <div className="flex items-center gap-3">
+                  <User size={18} className="text-[#557e62]" />
+                  <span>Customer Sign In</span>
+                </div>
+                <ChevronRight size={16} className="text-[#a0b0a4]" />
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Drawer Footer Actions */}
+        <div className="px-5 py-4 border-t border-[#e5ebe4] space-y-3 bg-[#f8faf5]">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-[#718078]">Language</span>
+            <LanguagePicker />
+          </div>
+          <Link
+            onClick={closeMenu}
+            href="/book"
+            className="btn btn-dark w-full py-3.5 text-sm font-bold flex items-center justify-center gap-2 rounded-xl shadow-xs min-h-[48px]"
+          >
+            <span>{t("sendRequest")}</span>
+            <ArrowRight size={16} />
           </Link>
         </div>
-        <button
-          className="menu-button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? <X size={23} /> : <Menu size={23} />}
-        </button>
       </div>
-    </header>
+    </>
   );
 }
 export function Footer() {

@@ -100,56 +100,27 @@ export default function WorkersPage() {
           {/* Simple Search & Filters */}
           <form
             onSubmit={handleSearch}
-            style={{
-              maxWidth: 720,
-              margin: "0 auto 40px",
-              background: "#ffffff",
-              border: "1px solid #e5ebe4",
-              borderRadius: 14,
-              padding: "8px 12px",
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              boxShadow: "0 10px 30px rgba(18, 59, 48, 0.05)",
-              flexWrap: "wrap",
-            }}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white border border-[#e5ebe4] rounded-2xl p-2 sm:p-3 shadow-sm max-w-2xl mx-auto mb-10"
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flex: "1 1 200px", padding: "6px 8px" }}>
-              <MapPin size={18} style={{ color: "#718078", flexShrink: 0 }} />
+            <div className="flex items-center gap-2.5 flex-1 min-w-0 px-2 py-1.5">
+              <MapPin size={18} className="text-[#718078] shrink-0" />
               <input
                 aria-label="Filter by City"
                 placeholder="Enter city (e.g. Bhopal)"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                style={{
-                  border: 0,
-                  outline: "none",
-                  width: "100%",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: "#243b32",
-                  background: "transparent",
-                }}
+                className="border-0 outline-none w-full text-sm font-semibold text-[#243b32] bg-transparent min-w-0"
               />
             </div>
 
-            <div style={{ height: 28, width: 1, background: "#e5ebe4" }} className="mobile-hide" />
+            <div className="hidden sm:block h-7 w-px bg-[#e5ebe4]" />
 
-            <div style={{ display: "flex", alignItems: "center", flex: "1 1 200px", padding: "6px 8px" }}>
+            <div className="flex items-center flex-1 min-w-0 px-2 py-1.5">
               <select
                 aria-label="Filter by Service"
                 value={service}
                 onChange={(e) => setService(e.target.value)}
-                style={{
-                  border: 0,
-                  outline: "none",
-                  width: "100%",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  color: "#243b32",
-                  background: "transparent",
-                  cursor: "pointer",
-                }}
+                className="border-0 outline-none w-full text-sm font-semibold text-[#243b32] bg-transparent cursor-pointer min-w-0"
               >
                 <option value="">All Services</option>
                 {services.map((s) => (
@@ -160,12 +131,11 @@ export default function WorkersPage() {
               </select>
             </div>
 
-            <div style={{ display: "flex", gap: 8 }}>
+            <div className="flex items-center gap-2 px-1">
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn-dark"
-                style={{ padding: "12px 20px", fontSize: 13 }}
+                className="btn btn-dark w-full sm:w-auto py-3 px-5 text-xs sm:text-sm font-bold"
               >
                 <Search size={16} />
                 Search
@@ -174,13 +144,7 @@ export default function WorkersPage() {
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="btn"
-                  style={{
-                    padding: "12px 14px",
-                    background: "#f0f4ee",
-                    color: "#3d5746",
-                    fontSize: 13,
-                  }}
+                  className="btn py-3 px-3.5 bg-[#f0f4ee] text-[#3d5746] text-xs sm:text-sm font-bold"
                   title="Reset filters"
                 >
                   <RotateCcw size={15} />
@@ -250,13 +214,7 @@ export default function WorkersPage() {
               </Link>
             </div>
           ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                gap: 20,
-              }}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {workers.map((worker) => (
                 <article
                   key={worker.id}
