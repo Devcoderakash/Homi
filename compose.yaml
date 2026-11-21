@@ -1,0 +1,60 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-homi}
+      POSTGRES_DB: ${POSTGRES_DB:-homi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your .env file}
+    volumes:
+      - homi_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      PORT: 4000
+      APP_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER:-homi}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-homi}
+      JWT_SECRET: ${JWT_SECRET:-homi-secret-jwt-key-32-chars-long-minimum-secure}
+      CUSTOMER_APP_URL: http://localhost:3000
+      ADMIN_APP_URL: http://localhost:3001
+      WHATSAPP_GROUP_INVITE_URL: ${WHATSAPP_GROUP_INVITE_URL:-https://chat.whatsapp.com/ISoKOfnlJEe1MowRiGGlGb?s=cl&p=a&iam=2}
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  customer-frontend:
+    build:
+      context: ./frontend/customer-app
+      dockerfile: Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:4000/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  admin-frontend:
+    build:
+      context: ./frontend/admin-panel
+      dockerfile: Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:4000/api
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  homi_postgres:

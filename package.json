@@ -1,0 +1,14 @@
+{
+  "name": "homi-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:backend": "cd backend && go run cmd/api/main.go",
+    "dev:customer": "npm --prefix frontend/customer-app run dev",
+    "dev:admin": "npm --prefix frontend/admin-panel run dev",
+    "build:backend": "cd backend && go build -o bin/api cmd/api/main.go",
+    "build:customer": "npm --prefix frontend/customer-app run build",
+    "build:admin": "npm --prefix frontend/admin-panel run build",
+    "build": "npm run build:backend && npm run build:customer && npm run build:admin"
+  }
+}

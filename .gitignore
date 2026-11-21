@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+.next/
+*/.next/
+**/.next/
+out/
+build/
+dist/
+backend/bin/
+bin/
+*.exe
+*.test
+
+# Environment and secrets
+.env
+.env.*
+*.env
+**/.env
+**/.env.*
+**/*.env
+!**/.env.example
+!.env.example
+*.pem
+*.key
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+**/*.log
+
+# OS & IDE
+.DS_Store
+**/.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Runtime & uploads
+uploads/
+scratch/
+__pycache__/
+**/__pycache__/
+*.pyc
+**/*.pyc
+public/downloads/

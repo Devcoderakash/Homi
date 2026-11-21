@@ -1,0 +1,23 @@
+"use client";
+import { CalendarDays, Clock3, Languages, MapPin, Wrench, ArrowRight, IndianRupee, LockKeyhole } from "lucide-react";
+import Link from "next/link";
+import { ContactActions } from "@/components/contact-actions";
+import { useAppCopy, useLanguage } from "@/components/language";
+import { formatDate, services, type ServiceRequest } from "@/components/site";
+import { languages } from "@/lib/locales";
+import { readableTime } from "@/lib/india";
+import { money } from "@/lib/app-copy";
+import { coordinates, formattedDistance } from "@/lib/location";
+import { locationText } from "@/lib/location-copy";
+import { useServiceCopy } from "@/components/service-language";
+import { formatVisit } from "@/lib/visit-time";
+import { Camera, CalendarCheck2 } from "lucide-react";
+export function RequestCard({ request: r, workerView = false, detail = false, children }: { request: ServiceRequest; workerView?: boolean; detail?: boolean; children?: React.ReactNode }) {
+  const { language, t, serviceLabel, statusLabel } = useLanguage(); const { a } = useAppCopy();
+  const l = (key: Parameters<typeof locationText>[1]) => locationText(language, key); const { s } = useServiceCopy();
+  const service = services.find(s => s.name === r.category); const Icon = service?.icon || Wrench;
+  const name = workerView ? r.customerName : (r.selectedWorkerName || r.workerName);
+  const phone = workerView ? r.customerPhone : (r.selectedWorkerPhone || r.workerPhone);
+  const displayAmount = r.quoteFinalTotal || (r.quotedAmount ? (r.quotedAmount > 5000 ? r.quotedAmount / 100 : r.quotedAmount) : null);
+  return <article className="request-card local-request-card"><div className="request-card-top"><span className="request-category-icon" style={{ background: service?.color || "#e8eee9" }}><Icon size={23}/></span><div className="request-title-block"><div className="request-category">{serviceLabel(r.category)} <span>·</span> #{String(r.id).padStart(4, "0")} {r.isDemo && <span className="inline-demo-label">{t("demoLabel")}</span>}</div><h3 dir="auto">{r.title}</h3></div><span className={`status-pill status-${r.status}`}>{workerView && r.status === "open" ? t("newRequest") : statusLabel(r.status)}</span></div>{r.description !== r.title && <p className="request-description" dir="auto">{r.description}</p>}<div className="request-meta"><span><MapPin size={16}/>{r.address}{r.address !== r.city ? `, ${r.city}` : ""}</span><span>{r.preferredTime === "As soon as possible" ? <Clock3 size={16}/> : <CalendarDays size={16}/>} {formatDate(r.preferredDate, language)} · {readableTime(r.preferredTime, t)}</span>{workerView && r.distanceKm !== null && <span className="request-distance-chip"><MapPin size={15}/>{l("distance")}: {formattedDistance(r.distanceKm)}</span>}<span><Languages size={16}/>{t("preferredLanguage")}: {languages.find(l => l.code === r.preferredLanguage)?.label || "English"}</span></div>{r.visitStartsAt && r.status !== "cancelled" && <div className="card-visit-summary"><CalendarCheck2 size={17}/><div><small>{s(r.visitStatus === "pending" ? "bookedSlot" : "visitConfirmed")}</small><strong>{formatVisit(r.visitStartsAt, language)} · IST</strong></div></div>}{r.photoCount > 0 && <span className="card-photo-count"><Camera size={14}/>{r.photoCount} · {s("photos")}</span>}{r.requestedWorkerName && r.status === "open" && <p className="preferred-worker-note">{a("selectedWorker")}: {r.requestedWorkerName}</p>}{!detail && displayAmount && <div className="request-quote-summary"><IndianRupee size={15}/><strong>{money(displayAmount)}</strong><span>{a(r.quoteStatus === "approved" || r.status === "CUSTOMER_CONFIRMED" || r.status === "ASSIGNED" ? "quoteApproved" : "quotePending")}</span></div>}{name && phone && <div className="local-person-row"><div className="assigned-avatar">{name.charAt(0)}</div><div className="local-person-details"><small>{t(workerView ? "requestedBy" : "yourWorker")}</small><strong>{name}</strong>{!r.isDemo && <span>{phone}</span>}</div><ContactActions phone={phone} title={r.title} isDemo={r.isDemo}/></div>}{workerView && !phone && <p className="contact-unlock-note"><LockKeyhole size={14}/>{a("chatLocked")}</p>}{workerView && r.workerId && coordinates(r) && !r.isDemo && <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${r.latitude},${r.longitude}`)}&travelmode=driving`} target="_blank" rel="noopener noreferrer" className="request-directions-link"><MapPin size={16}/>{l("directions")}</a>}{!workerView && r.status === "open" && !r.hasLocation && <p className="legacy-location-note">{l("legacyLocation")}</p>}{children}{!detail && <Link href={`/requests/${r.id}`} className="request-details-link">{a("details")}<ArrowRight size={16}/></Link>}</article>;
+}
