@@ -107,10 +107,11 @@ func (h *WorkerApplicationHandler) ApproveApplication(c *gin.Context) {
 	_ = c.ShouldBindJSON(&input)
 
 	admin := middleware.GetCurrentUser(c)
-	var adminID uint = 423
-	if admin != nil {
-		adminID = admin.ID
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to approve worker applications")
+		return
 	}
+	adminID := admin.ID
 
 	worker, err := h.appSvc.ApproveApplication(uint(id), adminID, input.Notes)
 	if err != nil {
@@ -138,10 +139,11 @@ func (h *WorkerApplicationHandler) RejectApplication(c *gin.Context) {
 	_ = c.ShouldBindJSON(&input)
 
 	admin := middleware.GetCurrentUser(c)
-	var adminID uint = 423
-	if admin != nil {
-		adminID = admin.ID
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to reject worker applications")
+		return
 	}
+	adminID := admin.ID
 
 	app, err := h.appSvc.RejectApplication(uint(id), adminID, input.Notes)
 	if err != nil {

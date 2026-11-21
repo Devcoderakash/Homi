@@ -41,6 +41,12 @@ func (h *WhatsAppHandler) GetGroupLink(c *gin.Context) {
 
 // UpdateGroupLink saves validated WhatsApp group invite link
 func (h *WhatsAppHandler) UpdateGroupLink(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to update WhatsApp group link")
+		return
+	}
+
 	var input UpdateGroupLinkInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.SendBadRequest(c, err.Error())
@@ -52,12 +58,7 @@ func (h *WhatsAppHandler) UpdateGroupLink(c *gin.Context) {
 		targetURL = input.Link
 	}
 
-	admin := middleware.GetCurrentUser(c)
-	var adminID uint = 423
-	if admin != nil {
-		adminID = admin.ID
-	}
-
+	adminID := admin.ID
 	savedLink, err := h.whatsappSvc.UpdateGroupLink(targetURL, adminID)
 	if err != nil {
 		utils.SendBadRequest(c, err.Error())
@@ -100,6 +101,12 @@ func (h *WhatsAppHandler) GetJobMessage(c *gin.Context) {
 
 // MarkShared records sharing timestamp and advances status to SHARED_WITH_WORKERS
 func (h *WhatsAppHandler) MarkShared(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to mark request shared")
+		return
+	}
+
 	reqIDParam := c.Param("id")
 	reqID, err := strconv.ParseUint(reqIDParam, 10, 32)
 	if err != nil {
@@ -107,12 +114,7 @@ func (h *WhatsAppHandler) MarkShared(c *gin.Context) {
 		return
 	}
 
-	admin := middleware.GetCurrentUser(c)
-	var adminID uint = 423
-	if admin != nil {
-		adminID = admin.ID
-	}
-
+	adminID := admin.ID
 	req, err := h.whatsappSvc.MarkShared(uint(reqID), adminID)
 	if err != nil {
 		utils.SendBadRequest(c, err.Error())

@@ -30,13 +30,27 @@ type RouterDependencies struct {
 
 func SetupRouter(deps *RouterDependencies) *gin.Engine {
 	r := gin.New()
+	_ = r.SetTrustedProxies([]string{"127.0.0.1", "::1"})
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.CORSMiddleware(deps.Config))
+	r.Use(middleware.SecurityHeadersMiddleware())
+	r.Use(middleware.RateLimitMiddleware())
 	r.Use(middleware.AuthMiddleware(deps.Config, deps.DB))
 
 	// Static files serving (e.g. uploaded request photos)
 	r.Static("/uploads", "./uploads")
+
+	// Root endpoint for friendly browser verification
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"service": "homi-backend-api",
+			"status":  "running",
+			"message": "Welcome to Homi Backend API",
+			"health":  "/api/health",
+			"version": "1.0.0",
+		})
+	})
 
 	// Global Health check
 	healthHandler := func(c *gin.Context) {
@@ -63,9 +77,11 @@ func SetupRouter(deps *RouterDependencies) *gin.Engine {
 
 	// Helper to attach routes to a router group (used for both /api/v1 and /api)
 	registerCoreRoutes := func(rg *gin.RouterGroup) {
-		rg.GET("/health", func(c *gin.Context) {
+		healthFunc := func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"status": "ok", "api": "homi-v1"})
-		})
+		}
+		rg.GET("/health", healthFunc)
+		rg.HEAD("/health", healthFunc)
 
 		// --- AUTH ---
 		rg.POST("/auth/register", authH.Register)

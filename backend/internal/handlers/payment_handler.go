@@ -35,6 +35,12 @@ func (h *PaymentHandler) GetPaymentSettings(c *gin.Context) {
 
 // UpdatePaymentSettings allows administrators to update payment details
 func (h *PaymentHandler) UpdatePaymentSettings(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to modify payment settings")
+		return
+	}
+
 	var input services.PaymentSettingsInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.SendBadRequest(c, err.Error())
@@ -56,6 +62,12 @@ func (h *PaymentHandler) UpdatePaymentSettings(c *gin.Context) {
 
 // UploadQRCodeImage allows admin to upload custom QR code image
 func (h *PaymentHandler) UploadQRCodeImage(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to upload payment QR code")
+		return
+	}
+
 	file, err := c.FormFile("qr")
 	if err != nil {
 		file, err = c.FormFile("file")
@@ -116,6 +128,12 @@ func (h *PaymentHandler) GetPayment(c *gin.Context) {
 			"payment": nil,
 			"status":  "NOT_DUE",
 		})
+		return
+	}
+
+	user := middleware.GetCurrentUser(c)
+	if user != nil && user.Role != "admin" && payment.CustomerID != user.ID {
+		utils.SendForbidden(c, "Access denied: this payment belongs to another customer account")
 		return
 	}
 

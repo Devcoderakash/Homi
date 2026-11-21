@@ -13,9 +13,12 @@ async function api(person, path, body, method = body ? "POST" : "GET") {
   const data = await response.json();
   return { status: response.status, data };
 }
+const TEST_PASS = process.env.TEST_PASSWORD || ("qa-pass-" + randomUUID());
+const NEW_TEST_PASS = process.env.NEW_TEST_PASSWORD || ("new-qa-pass-" + randomUUID());
+
 async function register(label, role = "worker", city = "Bhopal") {
   const person = actor(); const email = `homi-smoke-${stamp}-${label}@example.com`;
-  const response = await api(person, "/api/auth", { action: "register", role, name: `QA Test ${label}`, email, phone: "9999999995", password: "StrongTest123", city, specialty: "Carpentry", ...(role === "worker" ? { latitude: city === "Delhi" ? 28.6139 : 23.2241, longitude: city === "Delhi" ? 77.2090 : 77.4345, locationSource: "map", locationLabel: `QA work location, ${city}`, serviceRadiusKm: 10 } : {}) });
+  const response = await api(person, "/api/auth", { action: "register", role, name: `QA Test ${label}`, email, phone: "9999999995", password: TEST_PASS, city, specialty: "Carpentry", ...(role === "worker" ? { latitude: city === "Delhi" ? 28.6139 : 23.2241, longitude: city === "Delhi" ? 77.2090 : 77.4345, locationSource: "map", locationLabel: `QA work location, ${city}`, serviceRadiusKm: 10 } : {}) });
   assert.equal(response.status, 200, JSON.stringify(response.data)); const me = await api(person, "/api/me"); person.id = me.data.user.id; person.email = email; accounts.push(email); return person;
 }
 async function patch(person, id, body, expected = 200) { const result = await api(person, `/api/requests/${id}`, body, "PATCH"); assert.equal(result.status, expected, JSON.stringify(result.data)); return result; }
@@ -32,7 +35,7 @@ try {
   const guest = actor(); const sent = await api(guest, "/api/requests", { ...requestPayload, requestedWorkerId: worker.id }); assert.equal(sent.status, 201, JSON.stringify(sent.data)); const id = sent.data.id;
   const beforeUpgrade = await api(guest, "/api/me"); guest.id = beforeUpgrade.data.user.id;
   const upgradedEmail = `homi-smoke-${stamp}-guest@example.com`; accounts.push(upgradedEmail);
-  const upgrade = await api(guest, "/api/auth", { action: "register", role: "customer", name: "QA Test Customer", email: upgradedEmail, phone: "9999999999", password: "StrongTest123" }); assert.equal(upgrade.status, 200);
+  const upgrade = await api(guest, "/api/auth", { action: "register", role: "customer", name: "QA Test Customer", email: upgradedEmail, phone: "9999999999", password: TEST_PASS }); assert.equal(upgrade.status, 200);
   assert.equal((await api(guest, "/api/me")).data.user.id, guest.id); assert.equal((await api(guest, "/api/requests")).data.requests[0].id, id);
   assert.equal((await api(guest, "/api/requests", { ...requestPayload, requestedWorkerId: worker.id })).data.id, id);
   console.log("PASS: no-signup Hindi request, guest upgrade preserves history, duplicate submit is safe");
@@ -75,10 +78,10 @@ try {
   assert.ok(!(await api(actor(), "/api/workers?city=Bhopal")).data.workers.some(item => item.id === worker.id));
   assert.equal((await api(worker, "/api/me", profile, "PATCH")).status, 200);
   const oldCookie = worker.cookie;
-  assert.equal((await api(worker, "/api/me", { action: "password", currentPassword: "StrongTest123", newPassword: "NewStrongTest123" }, "PATCH")).status, 200);
+  assert.equal((await api(worker, "/api/me", { action: "password", currentPassword: TEST_PASS, newPassword: NEW_TEST_PASS }, "PATCH")).status, 200);
   assert.equal((await api({ cookie: oldCookie }, "/api/me")).data.user, null);
-  assert.equal((await api(actor(), "/api/auth", { action: "login", email: worker.email, password: "StrongTest123" })).status, 401);
-  assert.equal((await api(worker, "/api/auth", { action: "login", email: worker.email, password: "NewStrongTest123" })).status, 200);
+  assert.equal((await api(actor(), "/api/auth", { action: "login", email: worker.email, password: TEST_PASS })).status, 401);
+  assert.equal((await api(worker, "/api/auth", { action: "login", email: worker.email, password: NEW_TEST_PASS })).status, 200);
   assert.equal((await api(worker, "/api/auth/logout", {})).status, 200); assert.equal((await api(worker, "/api/me")).data.user, null);
   console.log("PASS: worker availability, password rotation, old-session revocation and logout");
   const csrf = await fetch(base + "/api/requests", { method: "POST", headers: { Origin: "https://unrelated.example", "Content-Type": "application/json" }, body: "{}" }); assert.equal(csrf.status, 403);

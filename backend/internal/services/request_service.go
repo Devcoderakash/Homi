@@ -175,49 +175,39 @@ func (s *RequestService) CreateRequest(customerID uint, input CreateRequestInput
 }
 
 func (s *RequestService) ListRequests(filter RequestFilter) ([]models.ServiceRequest, int64, error) {
-	query := s.db.Model(&models.ServiceRequest{}).
-		Preload("Customer").
-		Preload("Worker").
-		Preload("Images").
-		Preload("WorkerQuotes").
-		Preload("CustomerQuotations", func(db *gorm.DB) *gorm.DB {
-			return db.Order("created_at DESC")
-		}).
-		Preload("Assignment").
-		Preload("Payment")
+	baseQuery := s.db.Model(&models.ServiceRequest{})
 
 	if filter.CustomerID != nil {
-		query = query.Where("customer_id = ?", *filter.CustomerID)
+		baseQuery = baseQuery.Where("customer_id = ?", *filter.CustomerID)
 	}
 
 	if filter.Category != "" {
-		query = query.Where("LOWER(category) = ?", strings.ToLower(filter.Category))
+		baseQuery = baseQuery.Where("LOWER(category) = ?", strings.ToLower(filter.Category))
 	}
 
 	if filter.Status != "" {
 		canonicalStatus := utils.NormalizeStatus(filter.Status)
-		// Match canonical status or any legacy variants
-		query = query.Where("status = ? OR UPPER(status) = ?", canonicalStatus, canonicalStatus)
+		baseQuery = baseQuery.Where("status = ? OR UPPER(status) = ?", canonicalStatus, canonicalStatus)
 	}
 
 	if filter.Scope == "active" {
-		query = query.Where("UPPER(status) NOT IN ('COMPLETED', 'CANCELLED', 'REJECTED', 'CUSTOMER_DECLINED')")
+		baseQuery = baseQuery.Where("UPPER(status) NOT IN ('COMPLETED', 'CANCELLED', 'REJECTED', 'CUSTOMER_DECLINED')")
 	} else if filter.Scope == "completed" {
-		query = query.Where("UPPER(status) = 'COMPLETED'")
+		baseQuery = baseQuery.Where("UPPER(status) = 'COMPLETED'")
 	} else if filter.Scope == "cancelled" {
-		query = query.Where("UPPER(status) IN ('CANCELLED', 'REJECTED', 'CUSTOMER_DECLINED')")
+		baseQuery = baseQuery.Where("UPPER(status) IN ('CANCELLED', 'REJECTED', 'CUSTOMER_DECLINED')")
 	} else if filter.Scope == "pending_approval" {
-		query = query.Where("UPPER(status) = 'CUSTOMER_APPROVAL_PENDING'")
+		baseQuery = baseQuery.Where("UPPER(status) = 'CUSTOMER_APPROVAL_PENDING'")
 	}
 
 	if filter.Search != "" {
 		pattern := "%" + strings.ToLower(filter.Search) + "%"
-		query = query.Where("LOWER(title) LIKE ? OR LOWER(description) LIKE ? OR LOWER(city) LIKE ? OR contact_phone LIKE ?",
+		baseQuery = baseQuery.Where("LOWER(title) LIKE ? OR LOWER(description) LIKE ? OR LOWER(city) LIKE ? OR contact_phone LIKE ?",
 			pattern, pattern, pattern, pattern)
 	}
 
 	var total int64
-	if err := query.Count(&total).Error; err != nil {
+	if err := baseQuery.Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -227,7 +217,17 @@ func (s *RequestService) ListRequests(filter RequestFilter) ([]models.ServiceReq
 	}
 
 	var requests []models.ServiceRequest
-	err := query.Order("created_at DESC").
+	err := baseQuery.
+		Preload("Customer").
+		Preload("Worker").
+		Preload("Images").
+		Preload("WorkerQuotes").
+		Preload("CustomerQuotations", func(db *gorm.DB) *gorm.DB {
+			return db.Order("created_at DESC")
+		}).
+		Preload("Assignment").
+		Preload("Payment").
+		Order("created_at DESC").
 		Limit(limit).
 		Offset(filter.Offset).
 		Find(&requests).Error
@@ -370,45 +370,39 @@ type RequestCounts struct {
 func (s *RequestService) GetCounts(customerID *uint) RequestCounts {
 	var counts RequestCounts
 
-	base := s.db.Model(&models.ServiceRequest{})
-	if customerID != nil {
-		base = base.Where("customer_id = ?", *customerID)
-	}
-	base.Count(&counts.Total)
+	rawSQL := `
+		SELECT
+			COUNT(*) AS total,
+			COUNT(*) FILTER (WHERE UPPER(status) NOT IN ('COMPLETED', 'CANCELLED', 'REJECTED', 'CUSTOMER_DECLINED')) AS active,
+			COUNT(*) FILTER (WHERE UPPER(status) = 'COMPLETED') AS completed,
+			COUNT(*) FILTER (WHERE UPPER(status) IN ('CANCELLED', 'REJECTED', 'CUSTOMER_DECLINED')) AS cancelled,
+			COUNT(*) FILTER (WHERE UPPER(status) IN ('NEW', 'PENDING_ADMIN_REVIEW', 'SHARED_WITH_WORKERS', 'OPEN_FOR_APPLICATIONS')) AS available,
+			COUNT(*) FILTER (WHERE UPPER(status) = 'CUSTOMER_APPROVAL_PENDING') AS pending_quotes
+		FROM service_requests
+	`
 
-	qActive := s.db.Model(&models.ServiceRequest{}).
-		Where("UPPER(status) NOT IN ('COMPLETED', 'CANCELLED', 'REJECTED', 'CUSTOMER_DECLINED')")
-	if customerID != nil {
-		qActive = qActive.Where("customer_id = ?", *customerID)
+	var row struct {
+		Total         int64
+		Active        int64
+		Completed     int64
+		Cancelled     int64
+		Available     int64
+		PendingQuotes int64
 	}
-	qActive.Count(&counts.Active)
 
-	qComp := s.db.Model(&models.ServiceRequest{}).Where("UPPER(status) = 'COMPLETED'")
 	if customerID != nil {
-		qComp = qComp.Where("customer_id = ?", *customerID)
+		rawSQL += " WHERE customer_id = ?"
+		_ = s.db.Raw(rawSQL, *customerID).Scan(&row).Error
+	} else {
+		_ = s.db.Raw(rawSQL).Scan(&row).Error
 	}
-	qComp.Count(&counts.Completed)
 
-	qCanc := s.db.Model(&models.ServiceRequest{}).
-		Where("UPPER(status) IN ('CANCELLED', 'REJECTED', 'CUSTOMER_DECLINED')")
-	if customerID != nil {
-		qCanc = qCanc.Where("customer_id = ?", *customerID)
-	}
-	qCanc.Count(&counts.Cancelled)
-
-	qAvail := s.db.Model(&models.ServiceRequest{}).
-		Where("UPPER(status) IN ('NEW', 'PENDING_ADMIN_REVIEW', 'SHARED_WITH_WORKERS', 'OPEN_FOR_APPLICATIONS')")
-	if customerID != nil {
-		qAvail = qAvail.Where("customer_id = ?", *customerID)
-	}
-	qAvail.Count(&counts.Available)
-
-	qPend := s.db.Model(&models.ServiceRequest{}).
-		Where("UPPER(status) = 'CUSTOMER_APPROVAL_PENDING'")
-	if customerID != nil {
-		qPend = qPend.Where("customer_id = ?", *customerID)
-	}
-	qPend.Count(&counts.PendingQuotes)
+	counts.Total = row.Total
+	counts.Active = row.Active
+	counts.Completed = row.Completed
+	counts.Cancelled = row.Cancelled
+	counts.Available = row.Available
+	counts.PendingQuotes = row.PendingQuotes
 
 	return counts
 }

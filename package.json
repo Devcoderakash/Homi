@@ -10,5 +10,9 @@
     "build:customer": "npm --prefix frontend/customer-app run build",
     "build:admin": "npm --prefix frontend/admin-panel run build",
     "build": "npm run build:backend && npm run build:customer && npm run build:admin"
+  },
+  "devDependencies": {
+    "autocannon": "^9.0.0",
+    "lighthouse": "^13.6.0"
   }
 }

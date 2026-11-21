@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"homi-backend/internal/middleware"
 	"homi-backend/internal/services"
 	"homi-backend/internal/utils"
 )
@@ -64,6 +65,12 @@ func (h *WorkerHandler) GetWorkerByID(c *gin.Context) {
 
 // ToggleAvailability toggles whether worker is currently active/accepting jobs
 func (h *WorkerHandler) ToggleAvailability(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to toggle worker availability")
+		return
+	}
+
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
@@ -86,6 +93,12 @@ func (h *WorkerHandler) ToggleAvailability(c *gin.Context) {
 
 // DeleteWorker permanently removes a worker from the roster
 func (h *WorkerHandler) DeleteWorker(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to delete workers")
+		return
+	}
+
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {

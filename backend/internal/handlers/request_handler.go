@@ -251,10 +251,31 @@ func (h *RequestHandler) UpdateStatus(c *gin.Context) {
 		return
 	}
 
-	var adminID *uint
 	user := middleware.GetCurrentUser(c)
-	if user != nil {
+	if user == nil {
+		utils.SendUnauthorized(c, "Authentication required to update request status")
+		return
+	}
+
+	normalizedInput := utils.NormalizeStatus(input.Status)
+	var adminID *uint
+	if user.Role == "admin" {
 		adminID = &user.ID
+	} else {
+		// Non-admins can only cancel their own request
+		req, err := h.requestSvc.GetRequestByID(uint(id))
+		if err != nil {
+			utils.SendNotFound(c, "Service request not found")
+			return
+		}
+		if req.CustomerID != user.ID {
+			utils.SendForbidden(c, "Access denied: cannot change status of another customer's request")
+			return
+		}
+		if normalizedInput != models.StatusCancelled {
+			utils.SendForbidden(c, "Customers may only cancel requests. Operational status changes require administrator privileges.")
+			return
+		}
 	}
 
 	updated, err := h.requestSvc.UpdateStatus(uint(id), input.Status, adminID, input.Notes)
@@ -274,6 +295,18 @@ func (h *RequestHandler) UploadPhotos(c *gin.Context) {
 	id, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
 		utils.SendBadRequest(c, "Invalid request ID")
+		return
+	}
+
+	req, err := h.requestSvc.GetRequestByID(uint(id))
+	if err != nil {
+		utils.SendNotFound(c, "Service request not found")
+		return
+	}
+
+	user := middleware.GetCurrentUser(c)
+	if user != nil && user.Role != "admin" && req.CustomerID != user.ID {
+		utils.SendForbidden(c, "Access denied: cannot upload photos to another customer's request")
 		return
 	}
 

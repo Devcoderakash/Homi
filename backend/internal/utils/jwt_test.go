@@ -5,7 +5,7 @@ import (
 )
 
 func TestGenerateAndValidateJWT(t *testing.T) {
-	secret := "test-secret-key-1234567890123456"
+	secret := GenerateRandomString(32)
 	userID := uint(42)
 	email := "customer@homi.local"
 	role := "customer"

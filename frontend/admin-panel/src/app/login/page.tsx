@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8faf5] flex flex-col justify-center items-center p-4">
+    <main className="min-h-screen bg-[#f8faf5] flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md">
         {/* Brand Header */}
         <div className="text-center mb-8">
@@ -143,6 +143,6 @@ export default function AdminLoginPage() {
           © {new Date().getFullYear()} homi. Secure Operator Dashboard
         </p>
       </div>
-    </div>
+    </main>
   );
 }

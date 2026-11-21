@@ -22,6 +22,12 @@ func NewQuotationHandler(quotationSvc *services.QuotationService) *QuotationHand
 
 // CreateWorkerQuote records quotation received from technician via WhatsApp group
 func (h *QuotationHandler) CreateWorkerQuote(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to record technician quotes")
+		return
+	}
+
 	idParam := c.Param("id")
 	requestID, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
@@ -50,6 +56,12 @@ func (h *QuotationHandler) CreateWorkerQuote(c *gin.Context) {
 
 // ListWorkerQuotes returns all technician quotes submitted for a request
 func (h *QuotationHandler) ListWorkerQuotes(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to view internal technician quotations")
+		return
+	}
+
 	idParam := c.Param("id")
 	requestID, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
@@ -71,6 +83,12 @@ func (h *QuotationHandler) ListWorkerQuotes(c *gin.Context) {
 
 // UpdateWorkerQuote modifies an existing worker quote
 func (h *QuotationHandler) UpdateWorkerQuote(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to modify technician quotes")
+		return
+	}
+
 	quoteIDParam := c.Param("quoteId")
 	if quoteIDParam == "" {
 		quoteIDParam = c.Param("id")
@@ -101,6 +119,12 @@ func (h *QuotationHandler) UpdateWorkerQuote(c *gin.Context) {
 
 // DeleteWorkerQuote removes a worker quote
 func (h *QuotationHandler) DeleteWorkerQuote(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to delete technician quotes")
+		return
+	}
+
 	quoteIDParam := c.Param("quoteId")
 	if quoteIDParam == "" {
 		quoteIDParam = c.Param("id")

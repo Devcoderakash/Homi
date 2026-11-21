@@ -152,6 +152,10 @@ export default function HomePage() {
                   src="/images/indian-home.jpg"
                   alt="A modern comfortable family home interior"
                   className="hero-img-element"
+                  width={800}
+                  height={600}
+                  fetchPriority="high"
+                  decoding="async"
                   onError={(e) => {
                     const target = e.currentTarget;
                     if (!target.dataset.fallback) {
@@ -297,6 +301,10 @@ export default function HomePage() {
                   src="/images/why-repair.jpg"
                   alt="A skilled technician working"
                   className="why-img-element"
+                  width={600}
+                  height={500}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     const target = e.currentTarget;
                     if (!target.dataset.fallback) {

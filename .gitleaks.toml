@@ -1,0 +1,13 @@
+title = "Homi Platform Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Ignore build artifacts, audit reports, and uncommitted local env files"
+paths = [
+  '''\.next''',
+  '''node_modules''',
+  '''docs/audit-reports/.*''',
+  '''\.env$''',
+]

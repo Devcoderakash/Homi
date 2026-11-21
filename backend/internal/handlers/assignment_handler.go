@@ -36,10 +36,11 @@ func (h *AssignmentHandler) ConfirmAssignment(c *gin.Context) {
 	_ = c.ShouldBindJSON(&input)
 
 	admin := middleware.GetCurrentUser(c)
-	var adminID uint = 423
-	if admin != nil {
-		adminID = admin.ID
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to confirm worker assignment")
+		return
 	}
+	adminID := admin.ID
 
 	assignment, req, err := h.assignmentSvc.ConfirmAssignment(uint(reqID), adminID, input.WorkerID)
 	if err != nil {
@@ -97,10 +98,11 @@ func (h *AssignmentHandler) MarkWorkCompleted(c *gin.Context) {
 	_ = c.ShouldBindJSON(&input)
 
 	admin := middleware.GetCurrentUser(c)
-	var adminID uint = 423
-	if admin != nil {
-		adminID = admin.ID
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to complete work")
+		return
 	}
+	adminID := admin.ID
 
 	req, assign, payment, err := h.assignmentSvc.MarkWorkCompleted(uint(reqID), adminID, input.CompletionNote)
 	if err != nil {
@@ -132,10 +134,11 @@ func (h *AssignmentHandler) MarkWorkInProgress(c *gin.Context) {
 	_ = c.ShouldBindJSON(&input)
 
 	admin := middleware.GetCurrentUser(c)
-	var adminID uint = 423
-	if admin != nil {
-		adminID = admin.ID
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to update work progress")
+		return
 	}
+	adminID := admin.ID
 
 	req, assign, err := h.assignmentSvc.MarkWorkInProgress(uint(reqID), adminID, input.CompletionNote)
 	if err != nil {

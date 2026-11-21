@@ -86,22 +86,22 @@ func (CustomerProfile) TableName() string {
 // Worker represents an approved local service technician
 type Worker struct {
 	ID              uint      `gorm:"primaryKey" json:"id"`
-	UserID          *uint     `json:"userId,omitempty"`
+	UserID          *uint     `gorm:"index" json:"userId,omitempty"`
 	Name            string    `gorm:"size:120;not null" json:"name"`
-	Phone           string    `gorm:"size:40;not null" json:"phone"`
+	Phone           string    `gorm:"size:40;not null;index" json:"phone"`
 	Email           string    `gorm:"size:255" json:"email,omitempty"`
-	Specialty       string    `gorm:"size:80;not null" json:"specialty"`
+	Specialty       string    `gorm:"size:80;not null;index" json:"specialty"`
 	Skills          string    `gorm:"type:text" json:"skills,omitempty"`
 	ExperienceYears int       `gorm:"default:0" json:"experienceYears"`
-	City            string    `gorm:"size:120" json:"city"`
+	City            string    `gorm:"size:120;index" json:"city"`
 	Area            string    `gorm:"size:120" json:"area"`
 	Address         string    `gorm:"type:text" json:"address"`
 	VisitFee        int       `gorm:"default:19900" json:"visitFee"`
-	Available       bool      `gorm:"default:true" json:"available"`
+	Available       bool      `gorm:"default:true;index" json:"available"`
 	Rating          *float64  `json:"rating,omitempty"`
 	ReviewCount     int       `gorm:"default:0" json:"reviewCount"`
 	ServiceRadiusKm int       `gorm:"default:15" json:"serviceRadiusKm"`
-	CreatedAt       time.Time `json:"createdAt"`
+	CreatedAt       time.Time `gorm:"index" json:"createdAt"`
 	UpdatedAt       time.Time `json:"updatedAt"`
 }
 
@@ -142,17 +142,17 @@ func (WorkerApplication) TableName() string {
 // ServiceRequest represents a customer household service booking
 type ServiceRequest struct {
 	ID                     uint                  `gorm:"primaryKey" json:"id"`
-	CustomerID             uint                  `gorm:"not null" json:"customerId"`
+	CustomerID             uint                  `gorm:"not null;index:idx_requests_customer_created,priority:1;index" json:"customerId"`
 	Customer               *User                 `gorm:"foreignKey:CustomerID" json:"customer,omitempty"`
-	WorkerID               *uint                 `json:"workerId,omitempty"`
+	WorkerID               *uint                 `gorm:"index" json:"workerId,omitempty"`
 	Worker                 *Worker               `gorm:"foreignKey:WorkerID" json:"worker,omitempty"`
-	Category               string                `gorm:"size:80;not null" json:"category"`
+	Category               string                `gorm:"size:80;not null;index" json:"category"`
 	Title                  string                `gorm:"size:160;not null" json:"title"`
 	Description            string                `gorm:"type:text;not null" json:"description"`
 	ContactName            string                `gorm:"size:120" json:"contactName"`
 	ContactPhone           string                `gorm:"size:40" json:"contactPhone"`
 	Address                string                `gorm:"type:text;not null" json:"address"`
-	City                   string                `gorm:"size:120;not null" json:"city"`
+	City                   string                `gorm:"size:120;not null;index" json:"city"`
 	Latitude               *float64              `json:"latitude,omitempty"`
 	Longitude              *float64              `json:"longitude,omitempty"`
 	LocationLabel          *string               `gorm:"size:300" json:"locationLabel,omitempty"`
@@ -160,7 +160,7 @@ type ServiceRequest struct {
 	PreferredDate          string                `gorm:"size:30;not null" json:"preferredDate"`
 	PreferredTime          string                `gorm:"size:50;not null" json:"preferredTime"`
 	PreferredLanguage      string                `gorm:"size:10;default:'en'" json:"preferredLanguage"`
-	Status                 string                `gorm:"size:40;not null;default:'NEW'" json:"status"`
+	Status                 string                `gorm:"size:40;not null;default:'NEW';index" json:"status"`
 	QuotedAmount           *int                  `json:"quotedAmount,omitempty"`
 	QuoteNote              *string               `gorm:"type:text" json:"quoteNote,omitempty"`
 	QuoteStatus            string                `gorm:"size:20;default:'none'" json:"quoteStatus"`
@@ -200,7 +200,7 @@ type ServiceRequest struct {
 	LatestQuotation        *CustomerQuotation    `gorm:"-" json:"quotation,omitempty"`
 	Assignment             *Assignment           `gorm:"foreignKey:RequestID" json:"assignment,omitempty"`
 	Payment                *Payment              `gorm:"foreignKey:RequestID" json:"payment,omitempty"`
-	CreatedAt              time.Time             `json:"createdAt"`
+	CreatedAt              time.Time             `gorm:"index:idx_requests_customer_created,priority:2;index" json:"createdAt"`
 	UpdatedAt              time.Time             `json:"updatedAt"`
 }
 
@@ -321,13 +321,13 @@ func (q *CustomerQuotation) ToCustomerFacing() CustomerFacingQuotation {
 type Assignment struct {
 	ID             uint       `gorm:"primaryKey" json:"id"`
 	RequestID      uint       `gorm:"not null;index" json:"requestId"`
-	QuotationID    *uint      `json:"quotationId,omitempty"`
-	WorkerID       *uint      `json:"workerId,omitempty"`
+	QuotationID    *uint      `gorm:"index" json:"quotationId,omitempty"`
+	WorkerID       *uint      `gorm:"index" json:"workerId,omitempty"`
 	WorkerName     string     `gorm:"size:120" json:"workerName"`
 	WorkerPhone    string     `gorm:"size:40" json:"workerPhone"`
 	AssignedBy     uint       `gorm:"not null" json:"assignedBy"`
 	Notes          string     `gorm:"type:text" json:"notes,omitempty"`
-	Status         string     `gorm:"size:30;default:'ASSIGNED'" json:"status"`
+	Status         string     `gorm:"size:30;default:'ASSIGNED';index" json:"status"`
 	AssignedAt     time.Time  `json:"assignedAt"`
 	CompletedAt    *time.Time `json:"completedAt,omitempty"`
 	CompletedBy    *uint      `json:"completedBy,omitempty"`
@@ -437,8 +437,8 @@ type Category struct {
 	Slug        string    `gorm:"size:80;not null;uniqueIndex" json:"slug"`
 	Description string    `gorm:"type:text" json:"description,omitempty"`
 	Icon        string    `gorm:"size:50" json:"icon,omitempty"`
-	Active      bool      `gorm:"default:true" json:"active"`
-	SortOrder   int       `gorm:"default:0" json:"sortOrder"`
+	Active      bool      `gorm:"default:true;index" json:"active"`
+	SortOrder   int       `gorm:"default:0;index" json:"sortOrder"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
@@ -451,7 +451,7 @@ func (Category) TableName() string {
 type Notification struct {
 	ID        uint       `gorm:"primaryKey" json:"id"`
 	UserID    uint       `gorm:"not null;index" json:"userId"`
-	RequestID *uint      `json:"requestId,omitempty"`
+	RequestID *uint      `gorm:"index" json:"requestId,omitempty"`
 	Kind      string     `gorm:"size:40;not null" json:"kind"`
 	Title     string     `gorm:"size:160;not null" json:"title"`
 	ReadAt    *time.Time `json:"readAt,omitempty"`

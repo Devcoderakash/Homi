@@ -16,7 +16,7 @@ var DB *gorm.DB
 
 func InitDB(cfg *config.Config) *gorm.DB {
 	var gormLogger logger.Interface = logger.Default.LogMode(logger.Warn)
-	if cfg.AppEnv == "development" {
+	if cfg.AppEnv == "development_verbose" {
 		gormLogger = logger.Default.LogMode(logger.Info)
 	}
 
@@ -28,6 +28,7 @@ func InitDB(cfg *config.Config) *gorm.DB {
 		NowFunc: func() time.Time {
 			return time.Now().UTC()
 		},
+		PrepareStmt: false, // Incompatible with transaction poolers
 	})
 	if err != nil {
 		log.Fatalf("[Database] Failed to connect to PostgreSQL: %v", err)
@@ -38,9 +39,10 @@ func InitDB(cfg *config.Config) *gorm.DB {
 		log.Fatalf("[Database] Failed to get generic database object: %v", err)
 	}
 
-	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxIdleConns(25)
 	sqlDB.SetMaxOpenConns(50)
-	sqlDB.SetConnMaxLifetime(time.Hour)
+	sqlDB.SetConnMaxLifetime(15 * time.Minute)
+	sqlDB.SetConnMaxIdleTime(5 * time.Minute)
 
 	log.Println("[Database] Successfully connected to PostgreSQL / Supabase")
 

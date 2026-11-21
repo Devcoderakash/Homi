@@ -19,8 +19,8 @@ export default function RootPage() {
   }, [user, loading, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8faf5]">
+    <main className="min-h-screen flex items-center justify-center bg-[#f8faf5]" aria-label="Loading Admin Portal">
       <div className="w-8 h-8 border-3 border-[#123b30] border-t-transparent rounded-full animate-spin" />
-    </div>
+    </main>
   );
 }

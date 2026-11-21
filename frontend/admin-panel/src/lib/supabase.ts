@@ -10,7 +10,7 @@ const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
   process.env.VITE_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder";
+  "";
 
 export const isSupabaseConfigured = () => {
   return (
@@ -18,11 +18,14 @@ export const isSupabaseConfigured = () => {
     !supabaseUrl.includes("placeholder-project") &&
     !supabaseUrl.includes("your-project") &&
     Boolean(supabaseAnonKey) &&
-    !supabaseAnonKey.includes("placeholder")
+    supabaseAnonKey.length > 20
   );
 };
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient(
+  supabaseUrl || "https://placeholder-project.supabase.co",
+  supabaseAnonKey || "unconfigured-placeholder-key",
+  {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
