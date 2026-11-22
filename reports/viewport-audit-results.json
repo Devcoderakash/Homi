@@ -486,9 +486,9 @@
     "viewport": "Small-Mobile-320",
     "width": 320,
     "height": 568,
-    "status": "FAIL (Overflow)",
-    "hasOverflow": true,
-    "overflowDiff": 9,
+    "status": "PASS",
+    "hasOverflow": false,
+    "overflowDiff": 0,
     "screenshot": "reports/screenshots/customer-Guide-Small-Mobile-320.png"
   },
   {

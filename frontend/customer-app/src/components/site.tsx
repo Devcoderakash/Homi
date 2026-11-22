@@ -165,7 +165,7 @@ export function useCurrentUser() {
 
   return { user, loading };
 }
-export function Logo() { return <Link href="/" className="logo-mark" aria-label="homi home"><span className="logo-icon"><House size={21} strokeWidth={2.7}/></span><span>homi<span className="logo-dot">.</span></span></Link>; }
+export function Logo() { return <Link href="/" className="logo-mark" aria-label="homi home"><span className="logo-icon"><House size={21} strokeWidth={2.7} /></span><span>homi<span className="logo-dot">.</span></span></Link>; }
 export function Header() {
   const { user } = useCurrentUser();
   const { t } = useLanguage();
@@ -200,7 +200,7 @@ export function Header() {
       <header className="site-header">
         <div className="container header-inner">
           <Logo />
-          
+
           {/* Desktop Navigation (visible >= 1024px) */}
           <nav className="header-nav hidden lg:flex" aria-label="Main navigation">
             <Link href="/#services">Services</Link>
@@ -224,8 +224,8 @@ export function Header() {
             </Link>
 
             {/* Primary CTA (Always visible on all screen sizes, touch-friendly min 44px) */}
-            <Link 
-              href="/book" 
+            <Link
+              href="/book"
               className="btn btn-dark header-cta"
               aria-label="Send a Service Request"
             >
@@ -233,7 +233,7 @@ export function Header() {
               <span className="inline xs:hidden sm:hidden">Request</span>
               <ArrowRight size={15} />
             </Link>
-            
+
             {/* Hamburger Toggle (Visible < 1024px) */}
             <button
               type="button"
@@ -261,9 +261,8 @@ export function Header() {
       {/* Mobile Drawer Panel */}
       <div
         id="mobile-nav-drawer"
-        className={`fixed top-0 right-0 bottom-0 z-50 w-80 max-w-[85vw] bg-white text-[#183c31] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
-          menuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 bottom-0 z-50 w-80 max-w-[85vw] bg-white text-[#183c31] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${menuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
         style={{
           paddingTop: "max(16px, env(safe-area-inset-top))",
           paddingBottom: "max(16px, env(safe-area-inset-bottom))",
@@ -298,7 +297,7 @@ export function Header() {
             </div>
             <ChevronRight size={16} className="text-[#a0b0a4]" />
           </Link>
-          
+
           <Link
             onClick={closeMenu}
             href="/workers"
@@ -393,23 +392,17 @@ export function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <Logo />
-            <p>
-              Everyday household help, simple and close to home.
-              <br className="footer-break" />
-              <span className="footer-tagline-more">
-                Connect directly with verified local service professionals in your city.
-              </span>
-            </p>
+            <p>Everyday household help, simple and close to home.</p>
           </div>
           <div className="footer-links">
-            <div>
+            <div className="footer-col">
               <strong>Explore</strong>
               <Link href="/#services">Services</Link>
               <Link href="/workers">Find Local Workers</Link>
-              <Link href="/guide">Start Here</Link>
               <Link href="/book">Send a Request</Link>
+              <Link href="/guide">Start Here</Link>
             </div>
-            <div>
+            <div className="footer-col">
               <strong>For You</strong>
               <Link href="/become-a-worker">I Am a Worker</Link>
               <Link href="/login">Customer Sign In</Link>
@@ -418,7 +411,7 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} homi. Everyday household help, simple and close to home.</span>
+          <span>© {new Date().getFullYear()} homi. Everyday household help, close to home.</span>
           <span>Quality local care for every home <span className="heart">♥</span></span>
         </div>
       </div>

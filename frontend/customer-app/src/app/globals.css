@@ -1611,78 +1611,62 @@ button, .btn, a.btn {
   }
 }
 
-/* 9. Footer - Compact, App-Like Mobile UI */
+/* 9. Normal, Clean, Standard Footer */
 .footer {
-  background: #f6f8f3 !important;
-  padding: 24px 0 16px !important;
+  background: #f7f9f5 !important;
+  border-top: 1px solid #e7ede5 !important;
+  padding: 22px 0 16px !important;
 }
 @media (min-width: 768px) {
   .footer {
-    padding: 44px 0 24px !important;
+    padding: 32px 0 20px !important;
   }
 }
 
 .footer-top {
   display: flex !important;
   flex-direction: column !important;
-  gap: 16px !important;
-  padding-bottom: 16px !important;
+  gap: 14px !important;
+  padding-bottom: 14px !important;
 }
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .footer-top {
     flex-direction: row !important;
     justify-content: space-between !important;
-    padding-bottom: 48px !important;
-    gap: 40px !important;
+    align-items: flex-start !important;
+    gap: 32px !important;
+    padding-bottom: 20px !important;
   }
 }
 
 .footer-brand {
-  max-width: 380px !important;
+  max-width: 340px !important;
 }
 .footer-brand p {
   font-size: 13px !important;
-  line-height: 1.45 !important;
-  color: #6d7f72 !important;
-  margin: 6px 0 0 !important;
-}
-@media (min-width: 768px) {
-  .footer-brand p {
-    font-size: 14px !important;
-    line-height: 1.6 !important;
-    margin-top: 10px !important;
-  }
-}
-@media (max-width: 639px) {
-  .footer-tagline-more,
-  .footer-break {
-    display: none !important;
-  }
+  line-height: 1.4 !important;
+  color: #6a7c6f !important;
+  margin: 4px 0 0 !important;
 }
 
 .footer-links {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
-  gap: 14px 24px !important;
-  margin-right: 0 !important;
+  gap: 12px 24px !important;
+  margin: 0 !important;
 }
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .footer-links {
     display: flex !important;
-    gap: 80px !important;
-    margin-right: 40px !important;
+    gap: 50px !important;
   }
 }
 
-.footer-links > div {
+.footer-links > div,
+.footer-links .footer-col {
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
-}
-@media (min-width: 768px) {
-  .footer-links > div {
-    gap: 10px !important;
-  }
 }
 
 .footer-links strong {
@@ -1691,58 +1675,45 @@ button, .btn, a.btn {
   letter-spacing: 0.08em !important;
   color: #193e31 !important;
   font-weight: 800 !important;
-  margin-bottom: 2px !important;
-}
-@media (min-width: 768px) {
-  .footer-links strong {
-    font-size: 13px !important;
-    letter-spacing: 0.04em !important;
-    margin-bottom: 4px !important;
-  }
+  margin-bottom: 4px !important;
 }
 
 .footer-links a {
   font-size: 13px !important;
   line-height: 1.35 !important;
-  padding: 3px 0 !important;
-  min-height: auto !important;
+  padding: 2px 0 !important;
+  min-height: 0 !important;
   height: auto !important;
-  display: inline-block !important;
-  color: #556c5c !important;
+  display: block !important;
+  color: #4a6152 !important;
   transition: color 0.15s ease !important;
-}
-@media (min-width: 768px) {
-  .footer-links a {
-    font-size: 14px !important;
-    padding: 2px 0 !important;
-    min-height: 36px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-  }
+  text-decoration: none !important;
 }
 .footer-links a:hover {
   color: #193e31 !important;
 }
 
 .footer-bottom {
-  border-top: 1px solid #e3e9e0 !important;
+  border-top: 1px solid #e5ebe2 !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
   padding-top: 12px !important;
-  color: #8b9a8e !important;
+  color: #88988b !important;
   font-size: 11px !important;
-  line-height: 1.4 !important;
+  line-height: 1.35 !important;
 }
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .footer-bottom {
     flex-direction: row !important;
     justify-content: space-between !important;
     align-items: center !important;
     gap: 16px !important;
-    padding-top: 18px !important;
-    font-size: 12px !important;
+    padding-top: 14px !important;
   }
+}
+.footer-bottom .heart {
+  color: #78a458 !important;
 }
 
 /* 10. Forms (/book, /become-a-worker, /auth) Mobile Usability */
