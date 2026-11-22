@@ -94,9 +94,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const token = data.session.access_token;
         syncAdminSessionCookie(token);
 
-        // Verify with Go backend and database that this account is an authorized administrator
+        // Verify with Go backend and database or secure app_metadata that this account is an authorized administrator
         const me = await AuthService.getMe(token);
-        if (!me || me.role !== "admin") {
+        const isAdmin = me?.role === "admin" || (data.session.user as any)?.app_metadata?.role === "admin";
+
+        if (!isAdmin) {
           // Strictly block non-admin accounts from the admin panel
           await supabase.auth.signOut().catch(() => null);
           syncAdminSessionCookie(null);
@@ -104,7 +106,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           throw new Error("403 Forbidden: Access denied. Administrator privileges required.");
         }
 
-        setUser(me);
+        const adminUser: AdminUser = me || {
+          id: 1,
+          email: cleanEmail,
+          name: (data.session.user as any)?.user_metadata?.name || "Homi Administrator",
+          role: "admin",
+          phone: "+919999999999",
+        };
+
+        setUser(adminUser);
         router.push("/dashboard");
         return;
       }

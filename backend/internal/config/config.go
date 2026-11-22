@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -32,8 +33,8 @@ func LoadConfig() *Config {
 	dbURL := getEnv("DATABASE_URL", "postgresql://akashlodhi@localhost:5432/homi")
 	jwtSecret := getEnv("JWT_SECRET", "homi-secret-jwt-key-32-chars-long-minimum-secure")
 	supabaseJWTSecret := getEnv("SUPABASE_JWT_SECRET", jwtSecret)
-	customerAppURL := getEnv("CUSTOMER_APP_URL", "http://localhost:3000")
-	adminAppURL := getEnv("ADMIN_APP_URL", "http://localhost:3001")
+	customerAppURL := strings.TrimRight(getEnv("CUSTOMER_APP_URL", "http://localhost:3000"), "/")
+	adminAppURL := strings.TrimRight(getEnv("ADMIN_APP_URL", "http://localhost:3001"), "/")
 	whatsappURL := getEnv("WHATSAPP_GROUP_INVITE_URL", "https://chat.whatsapp.com/ISoKOfnlJEe1MowRiGGlGb?s=cl&p=a&iam=2")
 
 	cfg := &Config{
