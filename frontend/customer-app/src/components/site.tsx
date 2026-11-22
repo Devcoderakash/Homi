@@ -395,8 +395,10 @@ export function Footer() {
             <Logo />
             <p>
               Everyday household help, simple and close to home.
-              <br />
-              Connect directly with verified local service professionals in your city.
+              <br className="footer-break" />
+              <span className="footer-tagline-more">
+                Connect directly with verified local service professionals in your city.
+              </span>
             </p>
           </div>
           <div className="footer-links">

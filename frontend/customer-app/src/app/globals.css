@@ -1558,7 +1558,7 @@ button, .btn, a.btn {
   }
 }
 .cta-box {
-  padding: 28px 20px !important;
+  padding: 24px 18px !important;
   border-radius: 16px !important;
   min-height: auto !important;
   position: relative !important;
@@ -1571,7 +1571,7 @@ button, .btn, a.btn {
   }
 }
 .cta-text h2 {
-  font-size: clamp(1.5rem, 5vw, 2.75rem) !important;
+  font-size: clamp(1.4rem, 4.6vw, 2.75rem) !important;
   line-height: 1.2 !important;
 }
 .cta-buttons {
@@ -1579,7 +1579,7 @@ button, .btn, a.btn {
   flex-direction: column !important;
   gap: 12px !important;
   width: 100% !important;
-  margin-top: 20px !important;
+  margin-top: 18px !important;
 }
 @media (min-width: 640px) {
   .cta-buttons {
@@ -1611,65 +1611,137 @@ button, .btn, a.btn {
   }
 }
 
-/* 9. Footer */
+/* 9. Footer - Compact, App-Like Mobile UI */
 .footer {
   background: #f6f8f3 !important;
-  padding: 40px 0 24px !important;
+  padding: 24px 0 16px !important;
 }
+@media (min-width: 768px) {
+  .footer {
+    padding: 44px 0 24px !important;
+  }
+}
+
 .footer-top {
   display: flex !important;
   flex-direction: column !important;
-  gap: 32px !important;
-  padding-bottom: 36px !important;
+  gap: 16px !important;
+  padding-bottom: 16px !important;
 }
 @media (min-width: 1024px) {
   .footer-top {
     flex-direction: row !important;
     justify-content: space-between !important;
-    padding-bottom: 60px !important;
+    padding-bottom: 48px !important;
+    gap: 40px !important;
   }
 }
+
 .footer-brand {
-  max-width: 400px !important;
+  max-width: 380px !important;
 }
+.footer-brand p {
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+  color: #6d7f72 !important;
+  margin: 6px 0 0 !important;
+}
+@media (min-width: 768px) {
+  .footer-brand p {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    margin-top: 10px !important;
+  }
+}
+@media (max-width: 639px) {
+  .footer-tagline-more,
+  .footer-break {
+    display: none !important;
+  }
+}
+
 .footer-links {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
-  gap: 28px 36px !important;
+  gap: 14px 24px !important;
   margin-right: 0 !important;
 }
 @media (min-width: 1024px) {
   .footer-links {
     display: flex !important;
-    gap: 100px !important;
-    margin-right: 60px !important;
+    gap: 80px !important;
+    margin-right: 40px !important;
   }
 }
+
 .footer-links > div {
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  gap: 4px !important;
 }
+@media (min-width: 768px) {
+  .footer-links > div {
+    gap: 10px !important;
+  }
+}
+
+.footer-links strong {
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  color: #193e31 !important;
+  font-weight: 800 !important;
+  margin-bottom: 2px !important;
+}
+@media (min-width: 768px) {
+  .footer-links strong {
+    font-size: 13px !important;
+    letter-spacing: 0.04em !important;
+    margin-bottom: 4px !important;
+  }
+}
+
 .footer-links a {
-  font-size: 14px !important;
-  min-height: 44px !important;
-  display: inline-flex !important;
-  align-items: center !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  padding: 3px 0 !important;
+  min-height: auto !important;
+  height: auto !important;
+  display: inline-block !important;
   color: #556c5c !important;
+  transition: color 0.15s ease !important;
 }
+@media (min-width: 768px) {
+  .footer-links a {
+    font-size: 14px !important;
+    padding: 2px 0 !important;
+    min-height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+}
+.footer-links a:hover {
+  color: #193e31 !important;
+}
+
 .footer-bottom {
   border-top: 1px solid #e3e9e0 !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
-  padding-top: 20px !important;
+  gap: 4px !important;
+  padding-top: 12px !important;
   color: #8b9a8e !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
 }
 @media (min-width: 768px) {
   .footer-bottom {
     flex-direction: row !important;
     justify-content: space-between !important;
+    align-items: center !important;
+    gap: 16px !important;
+    padding-top: 18px !important;
+    font-size: 12px !important;
   }
 }
 
