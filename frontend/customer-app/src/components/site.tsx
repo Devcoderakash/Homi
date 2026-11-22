@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowRight, Armchair, Droplets, Fan, Hammer, House, Menu, PaintRoller, PlugZap, Sparkles, Wrench, X, Users, Briefcase, FileText, User, ChevronRight } from "lucide-react";
+import { ArrowRight, Armchair, Droplets, Fan, Hammer, House, Menu, PaintRoller, PlugZap, Plus, Sparkles, Wrench, X, Users, Briefcase, FileText, User, ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { LanguagePicker, useAppCopy, useLanguage } from "@/components/language";
 import { useReportCopy } from "@/components/report-language";
@@ -223,15 +223,20 @@ export function Header() {
               {user ? (user.name ? user.name.split(" ")[0] : "Dashboard") : "Sign In"}
             </Link>
 
-            {/* Primary CTA (Always visible on all screen sizes, touch-friendly min 44px) */}
+            {/* Primary CTA: "Request Help +" on mobile to match target UI, standard CTA on desktop */}
             <Link
               href="/book"
               className="btn btn-dark header-cta"
               aria-label="Send a Service Request"
             >
-              <span className="hidden xs:inline sm:inline">{t("sendRequest")}</span>
-              <span className="inline xs:hidden sm:hidden">Request</span>
-              <ArrowRight size={15} />
+              <span className="header-cta-desktop">
+                {t("sendRequest")}
+                <ArrowRight size={15} />
+              </span>
+              <span className="header-cta-mobile">
+                <span>Request Help</span>
+                <Plus size={14} strokeWidth={2.6} />
+              </span>
             </Link>
 
             {/* Hamburger Toggle (Visible < 1024px) */}

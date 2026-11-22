@@ -22,7 +22,10 @@ import {
   Armchair,
   Clock,
   ShieldCheck,
-  UserCheck
+  UserCheck,
+  LocateFixed,
+  Zap,
+  House
 } from "lucide-react";
 import { Footer, Header, services as defaultServices } from "@/components/site";
 import { useLanguage } from "@/components/language";
@@ -37,6 +40,14 @@ const iconMap: Record<string, any> = {
   Armchair,
   Wrench,
 };
+
+const mobilePopularServices = [
+  { name: "Furniture Repair", label: "Furniture\nRepair", icon: Armchair, serviceParam: "Furniture repair" },
+  { name: "Plumbing", label: "Plumbing", icon: Droplets, serviceParam: "Plumbing" },
+  { name: "Electrical", label: "Electrical", icon: Zap, serviceParam: "Electrical" },
+  { name: "Home Cleaning", label: "Home\nCleaning", icon: Sparkles, serviceParam: "Cleaning" },
+  { name: "Painting", label: "Painting", icon: PaintRoller, serviceParam: "Painting" },
+];
 
 type CategoryItem = {
   id?: number;
@@ -80,8 +91,221 @@ export default function HomePage() {
     <>
       <Header />
       <main>
-        {/* 1. HERO SECTION */}
-        <section className="hero-section local-hero">
+        {/* MOBILE EXPERIENCE (< 1024px): Matching reference app UI design */}
+        <section className="mobile-home-container block lg:hidden">
+          {/* Top-Right Decorative Architectural Arch Image */}
+          <div className="mobile-hero-arch-decor" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/hero-arch-transparent.png"
+              alt=""
+              width={185}
+              height={260}
+              className="mobile-arch-img"
+              loading="eager"
+            />
+          </div>
+
+          <div className="mobile-hero-content">
+            {/* Eyebrow */}
+            <div className="mobile-eyebrow">
+              <span className="mobile-eyebrow-spark">✳</span>
+              <span>YOUR NEIGHBOURHOOD, YOUR HELP</span>
+            </div>
+
+            {/* Headline with playful green swoop underline */}
+            <h1 className="mobile-hero-headline">
+              Ghar ka kaam?<br />
+              <span className="mobile-headline-sub">
+                Find help near you.
+                <svg
+                  className="mobile-swoosh"
+                  viewBox="0 0 160 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 10C45 4 110 3 157 7"
+                    stroke="#8cb441"
+                    strokeWidth="4.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="mobile-hero-desc">
+              A leaky tap, a broken sofa, or a fan that won’t start? Get trusted local professionals for every home need.
+            </p>
+          </div>
+
+          {/* Elevated "What do you need help with?" Card */}
+          <div className="mobile-search-card">
+            <div className="mobile-search-card-header">
+              <span className="mobile-search-badge">
+                <Wrench size={14} strokeWidth={2.5} />
+              </span>
+              <h2 className="mobile-search-title">What do you need help with?</h2>
+            </div>
+
+            {/* Service Select Field */}
+            <div className="mobile-search-input-wrap">
+              <Wrench size={18} className="mobile-input-icon-left" />
+              <select
+                aria-label="Select Service"
+                value={service}
+                onChange={(e) => setService(e.target.value)}
+                className="mobile-search-select"
+              >
+                <option value="">Select a service</option>
+                {categories.map((c) => (
+                  <option key={c.name} value={c.name}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={17} className="mobile-input-icon-right pointer-events-none" />
+            </div>
+
+            {/* City Field */}
+            <div className="mobile-search-input-wrap">
+              <MapPin size={18} className="mobile-input-icon-left" />
+              <input
+                type="text"
+                aria-label="City"
+                placeholder="Enter your city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="mobile-search-input"
+              />
+              <button
+                type="button"
+                className="mobile-locate-btn"
+                aria-label="Locate current city"
+                onClick={() => {
+                  if (typeof navigator !== "undefined" && navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      () => setCity("Bhopal"),
+                      () => setCity("Bhopal")
+                    );
+                  }
+                }}
+              >
+                <LocateFixed size={18} className="mobile-locate-icon" />
+              </button>
+            </div>
+
+            {/* Submit Button */}
+            <Link
+              href={bookingUrl}
+              className="btn mobile-search-btn"
+              aria-label="Send a Request"
+            >
+              <span>Send a Request</span>
+              <ArrowRight size={18} />
+            </Link>
+          </div>
+
+          {/* Popular Services Section */}
+          <div className="mobile-popular-section">
+            <div className="mobile-popular-header">
+              <h2 className="mobile-popular-title">Popular Services</h2>
+              <Link href="/book" className="mobile-popular-all">
+                <span>View All</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+
+            <div className="mobile-popular-grid">
+              {mobilePopularServices.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    href={`/book?service=${encodeURIComponent(item.serviceParam)}`}
+                    className="mobile-popular-item"
+                  >
+                    <div className="mobile-popular-icon-box">
+                      <Icon size={24} strokeWidth={1.8} />
+                    </div>
+                    <span className="mobile-popular-label">
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Promotional Banner Card ("Keep your home in perfect shape.") */}
+          <div className="mobile-promo-banner-wrap">
+            <div className="mobile-promo-card">
+              <div className="mobile-promo-content">
+                <h3 className="mobile-promo-title">
+                  Keep your home<br />
+                  <span className="mobile-promo-highlight">in perfect shape.</span>
+                </h3>
+                <p className="mobile-promo-subtitle">
+                  Trusted professionals for all home services.
+                </p>
+                <Link href="/book" className="mobile-promo-btn">
+                  <span>Book Now</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
+              <div className="mobile-promo-image-wrap" aria-hidden="true">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/promo-sofa-clean.png"
+                  alt=""
+                  width={260}
+                  height={150}
+                  className="mobile-promo-img"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            {/* Carousel Pagination Dots */}
+            <div className="mobile-promo-dots" aria-hidden="true">
+              <span className="mobile-dot active" />
+              <span className="mobile-dot" />
+              <span className="mobile-dot" />
+            </div>
+          </div>
+
+          {/* Trust Badges (Verified Pros / Fast Response / Home Friendly) */}
+          <div className="mobile-trust-badges">
+            <div className="mobile-trust-badge-item">
+              <ShieldCheck size={22} className="mobile-trust-icon" strokeWidth={1.8} />
+              <div className="mobile-trust-text">
+                <strong>Verified Pros</strong>
+                <small>Background checked</small>
+              </div>
+            </div>
+
+            <div className="mobile-trust-badge-item">
+              <Zap size={22} className="mobile-trust-icon" strokeWidth={1.8} />
+              <div className="mobile-trust-text">
+                <strong>Fast Response</strong>
+                <small>In your area</small>
+              </div>
+            </div>
+
+            <div className="mobile-trust-badge-item">
+              <House size={22} className="mobile-trust-icon" strokeWidth={1.8} />
+              <div className="mobile-trust-text">
+                <strong>Home Friendly</strong>
+                <small>Safe & reliable</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 1. DESKTOP HERO SECTION (visible >= 1024px only) */}
+        <section className="hero-section local-hero hidden lg:block">
           <div className="container hero-grid">
             <div className="hero-copy">
               <div className="eyebrow">
@@ -208,8 +432,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* 2. SERVICES SECTION */}
-        <section className="section services-section" id="services">
+        {/* 2. SERVICES SECTION (Desktop only, mobile has Popular Services above) */}
+        <section className="section services-section hidden lg:block" id="services">
           <div className="container">
             <div className="section-heading">
               <div>
