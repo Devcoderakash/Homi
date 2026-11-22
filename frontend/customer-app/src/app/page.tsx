@@ -53,6 +53,36 @@ const mobilePopularServices = [
   { name: "Painting", label: "Painting", icon: PaintRoller, serviceParam: "Painting" },
 ];
 
+const promoSlides = [
+  {
+    lead: "Keep your home",
+    highlight: "in perfect shape.",
+    subtitle: "Trusted professionals for all home services.",
+    btnText: "Book Now",
+    href: "/book",
+    image: "/images/promo-sofa-clean.png",
+    alt: "Living room sofa and furniture care",
+  },
+  {
+    lead: "Fast home repairs.",
+    highlight: "Verified experts.",
+    subtitle: "Plumbers, electricians & technicians near you.",
+    btnText: "Find Help",
+    href: "/workers",
+    image: "/images/promo-repair.png",
+    alt: "Technician home repair services",
+  },
+  {
+    lead: "Fair pricing.",
+    highlight: "No hidden fees.",
+    subtitle: "Agree on the cost before any work begins.",
+    btnText: "How It Works",
+    href: "/guide",
+    image: "/images/promo-home.png",
+    alt: "Fair upfront pricing",
+  },
+];
+
 type CategoryItem = {
   id?: number;
   slug?: string;
@@ -69,6 +99,32 @@ export default function HomePage() {
   const [service, setService] = useState("");
   const [city, setCity] = useState("Bhopal");
   const [servicesSearch, setServicesSearch] = useState("");
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % promoSlides.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        setActiveSlide((prev) => (prev + 1) % promoSlides.length);
+      } else {
+        setActiveSlide((prev) => (prev - 1 + promoSlides.length) % promoSlides.length);
+      }
+    }
+    setTouchStartX(null);
+  };
 
   const filteredServices = categories.filter((item) => {
     if (!servicesSearch.trim()) return true;
@@ -250,40 +306,56 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Promotional Banner Card ("Keep your home in perfect shape.") */}
+          {/* Promotional Banner Carousel (3 slides with dots) */}
           <div className="mobile-promo-banner-wrap">
-            <div className="mobile-promo-card">
-              <div className="mobile-promo-content">
-                <h3 className="mobile-promo-title">
-                  Keep your home<br />
-                  <span className="mobile-promo-highlight">in perfect shape.</span>
-                </h3>
-                <p className="mobile-promo-subtitle">
-                  Trusted professionals for all home services.
-                </p>
-                <Link href="/book" className="mobile-promo-btn">
-                  <span>Book Now</span>
-                  <ArrowRight size={13} />
-                </Link>
-              </div>
-              <div className="mobile-promo-image-wrap" aria-hidden="true">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/promo-sofa-clean.png"
-                  alt=""
-                  width={260}
-                  height={150}
-                  className="mobile-promo-img"
-                  loading="lazy"
-                />
+            <div
+              className="mobile-promo-card"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
+              <div key={activeSlide} className="mobile-promo-slide-inner">
+                <div className="mobile-promo-content">
+                  <h3 className="mobile-promo-title">
+                    {promoSlides[activeSlide].lead}<br />
+                    <span className="mobile-promo-highlight">{promoSlides[activeSlide].highlight}</span>
+                  </h3>
+                  <p className="mobile-promo-subtitle">
+                    {promoSlides[activeSlide].subtitle}
+                  </p>
+                  <Link href={promoSlides[activeSlide].href} className="mobile-promo-btn">
+                    <span>{promoSlides[activeSlide].btnText}</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+                <div className="mobile-promo-image-wrap" aria-hidden="true">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={promoSlides[activeSlide].image}
+                    alt={promoSlides[activeSlide].alt}
+                    width={260}
+                    height={150}
+                    className="mobile-promo-img"
+                    loading="lazy"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Carousel Pagination Dots */}
-            <div className="mobile-promo-dots" aria-hidden="true">
-              <span className="mobile-dot active" />
-              <span className="mobile-dot" />
-              <span className="mobile-dot" />
+            <div className="mobile-promo-dots" role="tablist" aria-label="Featured promotions">
+              {promoSlides.map((slide, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeSlide === idx}
+                  aria-label={`Slide ${idx + 1}: ${slide.lead} ${slide.highlight}`}
+                  className={`mobile-dot-btn ${activeSlide === idx ? "active" : ""}`}
+                  onClick={() => setActiveSlide(idx)}
+                >
+                  <span className="mobile-dot-indicator" />
+                </button>
+              ))}
             </div>
           </div>
 

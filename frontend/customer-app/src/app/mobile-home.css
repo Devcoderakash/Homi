@@ -335,6 +335,23 @@
     display: flex !important;
     align-items: center !important;
   }
+  .mobile-promo-slide-inner {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    animation: promoSlideIn 0.35s ease-out !important;
+  }
+  @keyframes promoSlideIn {
+    from {
+      opacity: 0.6;
+      transform: translateX(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
   .mobile-promo-content {
     position: relative !important;
     z-index: 2 !important;
@@ -397,6 +414,31 @@
     margin-top: 10px !important;
     margin-bottom: 8px !important;
   }
+  .mobile-dot-btn {
+    background: transparent !important;
+    border: none !important;
+    padding: 6px 4px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  .mobile-dot-indicator {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background: #cfdacd !important;
+    display: inline-block !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  .mobile-dot-btn.active .mobile-dot-indicator {
+    width: 16px !important;
+    height: 6px !important;
+    border-radius: 999px !important;
+    background: #173b2d !important;
+  }
   .mobile-dot {
     width: 6px !important;
     height: 6px !important;
@@ -405,8 +447,9 @@
     display: inline-block !important;
   }
   .mobile-dot.active {
-    width: 7px !important;
-    height: 7px !important;
+    width: 16px !important;
+    height: 6px !important;
+    border-radius: 999px !important;
     background: #173b2d !important;
   }
 
