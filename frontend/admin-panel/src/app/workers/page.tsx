@@ -19,6 +19,8 @@ import {
   Eye,
   UserCheck,
   Trash2,
+  Clock,
+  X,
 } from "lucide-react";
 import { AdminShell } from "../../components/layout/AdminShell";
 import { TablePagination } from "../../components/tables/TablePagination";
@@ -38,6 +40,7 @@ export default function WorkersPage() {
   const [togglingId, setTogglingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [zoomImage, setZoomImage] = useState<{ url: string; title: string } | null>(null);
   const pageSize = 10;
 
   const loadWorkers = async (searchQuery?: string) => {
@@ -480,17 +483,109 @@ export default function WorkersPage() {
           {selectedWorker && (
             <div className="space-y-5 text-xs text-[#183c31]">
               <div className="flex items-center justify-between p-3.5 bg-[#f8faf5] rounded-xl border border-[#e5ebe4]">
-                <div>
-                  <span className="text-[10px] text-[#718078] uppercase font-bold tracking-wider">
-                    Trade Specialty
-                  </span>
-                  <p className="font-extrabold text-[#123b30] text-sm capitalize">
-                    {selectedWorker.specialty || "General Handyman"}
-                  </p>
+                <div className="flex items-center gap-3">
+                  {selectedWorker.profilePhotoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img 
+                      src={selectedWorker.profilePhotoUrl} 
+                      alt="" 
+                      className="w-12 h-12 rounded-full object-cover border border-[#c5d3c1]" 
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-[#123b30] text-[#d9ed89] font-extrabold text-base flex items-center justify-center">
+                      {(selectedWorker.name || selectedWorker.fullName || "W").charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div>
+                    <h3 className="font-extrabold text-[#123b30] text-sm">
+                      {selectedWorker.name || selectedWorker.fullName}
+                    </h3>
+                    <p className="text-[11px] text-[#718078] capitalize">
+                      {selectedWorker.specialty || "General Handyman"} • {selectedWorker.experienceYears || 0} Yrs Exp
+                    </p>
+                  </div>
                 </div>
                 <span className={`badge ${selectedWorker.available ? "bg-[#eaf5e5] text-[#285437]" : "bg-gray-100 text-gray-700"}`}>
                   {selectedWorker.available ? "Available" : "Offline"}
                 </span>
+              </div>
+
+              {/* Working Hours & Availability */}
+              <div className="space-y-1.5">
+                <h4 className="font-bold text-[#123b30] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                  <Clock size={13} className="text-[#3e6b45]" />
+                  <span>Availability & Working Hours</span>
+                </h4>
+                <div className="p-3 bg-white rounded-lg border border-[#e5ebe4] space-y-1.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#718078]">Working Hours:</span>
+                    <strong className="text-[#123b30] font-bold">
+                      {selectedWorker.availableFrom || "09:00 AM"} se {selectedWorker.availableTo || "07:00 PM"}
+                    </strong>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#718078]">Available Days:</span>
+                    <strong className="text-[#123b30] font-bold">
+                      {selectedWorker.availableDays || "Monday to Saturday"}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Profile & ID Verification Document */}
+              <div className="space-y-1.5">
+                <h4 className="font-bold text-[#123b30] uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                  <ShieldCheck size={13} className="text-[#3e6b45]" />
+                  <span>Profile & ID Verification Document</span>
+                </h4>
+                <div className="p-3 bg-white rounded-lg border border-[#e5ebe4] space-y-2.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#718078]">Document Type:</span>
+                    <span className="inline-block px-2.5 py-0.5 rounded text-[11px] font-extrabold bg-[#eaf3dd] text-[#225746] uppercase">
+                      {selectedWorker.documentType || "Aadhaar Card"}
+                    </span>
+                  </div>
+
+                  {(selectedWorker.documentUrl || selectedWorker.documentsUrl) ? (
+                    <div>
+                      <span className="text-[#718078] block mb-1.5 text-[11px]">Uploaded Document Image:</span>
+                      <div 
+                        onClick={() => setZoomImage({ 
+                          url: selectedWorker.documentUrl || selectedWorker.documentsUrl || "", 
+                          title: `${selectedWorker.name || selectedWorker.fullName} - ${selectedWorker.documentType || "Document"}` 
+                        })}
+                        className="relative rounded-lg overflow-hidden border border-[#ccd8ca] bg-[#1a231f] cursor-pointer group max-h-48 flex items-center justify-center p-1"
+                        title="Click to view full image"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img 
+                          src={(selectedWorker.documentUrl || selectedWorker.documentsUrl) || ""} 
+                          alt="Verification Document" 
+                          className="max-h-44 w-auto object-contain rounded group-hover:scale-102 transition-transform" 
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-white text-xs font-bold gap-1.5">
+                          <Eye size={15} />
+                          <span>Click to Enlarge</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setZoomImage({ 
+                          url: selectedWorker.documentUrl || selectedWorker.documentsUrl || "", 
+                          title: `${selectedWorker.name || selectedWorker.fullName} - ${selectedWorker.documentType || "Document"}` 
+                        })}
+                        className="btn btn-outline text-xs py-1.5 px-3 font-bold w-full mt-2 inline-flex items-center justify-center gap-1.5"
+                      >
+                        <Eye size={13} />
+                        <span>Open Document Image Full-Size</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="bg-[#f8faf5] border border-dashed border-[#ccd8ca] p-2.5 text-center rounded-lg text-xs text-[#718078]">
+                      Physical / In-person verified by local coordinator.
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-1.5">
@@ -506,6 +601,17 @@ export default function WorkersPage() {
                     <Phone size={13} className="text-[#557e62]" />
                     <span>{selectedWorker.phone || "No phone provided"}</span>
                   </div>
+                  {(selectedWorker.city || selectedWorker.address) && (
+                    <div className="flex items-start gap-2 pt-1 border-t border-[#f0f4ee]">
+                      <MapPin size={13} className="text-[#557e62] shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold">{selectedWorker.city || "Bhopal"}{selectedWorker.area ? `, ${selectedWorker.area}` : ""}</p>
+                        {selectedWorker.address && (
+                          <p className="text-[#718078] text-[11px] mt-0.5">{selectedWorker.address}</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -519,6 +625,28 @@ export default function WorkersPage() {
                   <p><strong>Base Visit Fee:</strong> {selectedWorker.visitFee ? formatRupees(selectedWorker.visitFee) : "Standard rate"}</p>
                 </div>
               </div>
+
+              {(selectedWorker.skills || selectedWorker.bio) && (
+                <div className="space-y-1.5">
+                  <h4 className="font-bold text-[#123b30] uppercase tracking-wider text-[11px]">
+                    Skills & Background
+                  </h4>
+                  <div className="p-3 bg-white rounded-lg border border-[#e5ebe4] space-y-2">
+                    {selectedWorker.skills && (
+                      <div>
+                        <span className="text-[#718078] text-[10px] uppercase font-bold block">Skills:</span>
+                        <p className="font-medium text-[#183c31] mt-0.5">{selectedWorker.skills}</p>
+                      </div>
+                    )}
+                    {selectedWorker.bio && (
+                      <div className="pt-1.5 border-t border-[#f0f4ee]">
+                        <span className="text-[#718078] text-[10px] uppercase font-bold block">Bio:</span>
+                        <p className="text-[#41534a] text-[11px] leading-relaxed mt-0.5">{selectedWorker.bio}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="pt-3 border-t border-[#e5ebe4] space-y-2">
                 <button
@@ -540,6 +668,36 @@ export default function WorkersPage() {
             </div>
           )}
         </Drawer>
+
+        {/* Document Image Zoom Modal */}
+        {zoomImage && (
+          <div 
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4"
+            onClick={() => setZoomImage(null)}
+          >
+            <div 
+              className="bg-white rounded-2xl max-w-3xl w-full p-4 overflow-hidden relative shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-[#e5ebe4] mb-3">
+                <span className="text-sm font-extrabold text-[#123b30]">
+                  {zoomImage.title}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setZoomImage(null)}
+                  className="p-1 rounded-lg text-[#718078] hover:text-[#123b30] hover:bg-[#f0f4ee]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="max-h-[75vh] overflow-auto flex items-center justify-center bg-[#1a231f] rounded-xl p-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={zoomImage.url} alt="Full Verification Document" className="max-w-full max-h-[70vh] object-contain rounded-lg" />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AdminShell>
   );

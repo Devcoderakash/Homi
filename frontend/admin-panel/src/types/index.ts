@@ -33,8 +33,18 @@ export type Worker = {
   phone?: string;
   role?: string;
   city?: string | null;
+  area?: string | null;
+  address?: string | null;
   specialty?: string | null;
+  skills?: string | null;
   bio?: string | null;
+  availableFrom?: string | null;
+  availableTo?: string | null;
+  availableDays?: string | null;
+  documentType?: string | null;
+  documentUrl?: string | null;
+  documentsUrl?: string | null;
+  profilePhotoUrl?: string | null;
   spokenLanguages?: string;
   experienceYears?: number;
   visitFee?: number; // in paise
@@ -46,6 +56,38 @@ export type Worker = {
   earnings?: number;
   approvalStatus?: "approved" | "pending" | "rejected";
   createdAt?: string;
+};
+
+export type WorkerApplication = {
+  id: number;
+  requestId?: number | null;
+  workerId?: number | null;
+  fullName?: string;
+  workerName?: string;
+  phone?: string;
+  email?: string;
+  category?: string;
+  specialty?: string;
+  skills?: string;
+  experienceYears?: number;
+  city?: string;
+  area?: string;
+  address?: string;
+  bio?: string;
+  availableFrom?: string;
+  availableTo?: string;
+  availableDays?: string;
+  documentType?: string;
+  documentUrl?: string;
+  documentsUrl?: string;
+  profilePhotoUrl?: string;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "shortlisted" | "accepted" | "rejected" | string;
+  adminNotes?: string;
+  appliedAt?: string;
+  createdAt?: string;
+  expectedCharges?: number;
+  message?: string;
+  note?: string;
 };
 
 export type ServiceCategory = {

@@ -108,10 +108,18 @@ export const adminApi = {
     return adminRequest(`/admin/applications${qStr}`);
   },
   getApplicationById: (id: number) => adminRequest(`/admin/applications/${id}`),
+  approveApplication: (id: number, notes?: string) =>
+    adminRequest(`/admin/applications/${id}/approve`, {
+      method: "POST",
+      body: JSON.stringify({ notes }),
+    }),
   shortlistApplication: (id: number) =>
     adminRequest(`/admin/applications/${id}/shortlist`, { method: "POST" }),
-  rejectApplication: (id: number) =>
-    adminRequest(`/admin/applications/${id}/reject`, { method: "POST" }),
+  rejectApplication: (id: number, notes?: string) =>
+    adminRequest(`/admin/applications/${id}/reject`, {
+      method: "POST",
+      body: JSON.stringify({ notes }),
+    }),
 
   // Assignments
   getAssignments: (params?: { status?: string; page?: number; limit?: number }) => {

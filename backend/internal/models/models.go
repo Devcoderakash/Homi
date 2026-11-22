@@ -96,6 +96,14 @@ type Worker struct {
 	City            string    `gorm:"size:120;index" json:"city"`
 	Area            string    `gorm:"size:120" json:"area"`
 	Address         string    `gorm:"type:text" json:"address"`
+	Bio             string    `gorm:"type:text" json:"bio,omitempty"`
+	AvailableFrom   string    `gorm:"size:40" json:"availableFrom,omitempty"`
+	AvailableTo     string    `gorm:"size:40" json:"availableTo,omitempty"`
+	AvailableDays   string    `gorm:"size:100" json:"availableDays,omitempty"`
+	DocumentType    string    `gorm:"size:80" json:"documentType,omitempty"`
+	DocumentURL     string    `gorm:"type:text" json:"documentUrl,omitempty"`
+	DocumentsURL    string    `gorm:"type:text" json:"documentsUrl,omitempty"`
+	ProfilePhotoURL string    `gorm:"type:text" json:"profilePhotoUrl,omitempty"`
 	VisitFee        int       `gorm:"default:19900" json:"visitFee"`
 	Available       bool      `gorm:"default:true;index" json:"available"`
 	Rating          *float64  `json:"rating,omitempty"`
@@ -124,6 +132,11 @@ type WorkerApplication struct {
 	Area            string     `gorm:"size:120" json:"area"`
 	Address         string     `gorm:"type:text" json:"address"`
 	Bio             string     `gorm:"type:text" json:"bio,omitempty"`
+	AvailableFrom   string     `gorm:"size:40" json:"availableFrom,omitempty"`
+	AvailableTo     string     `gorm:"size:40" json:"availableTo,omitempty"`
+	AvailableDays   string     `gorm:"size:100" json:"availableDays,omitempty"`
+	DocumentType    string     `gorm:"size:80" json:"documentType,omitempty"`
+	DocumentURL     string     `gorm:"type:text" json:"documentUrl,omitempty"`
 	ProfilePhotoURL string     `gorm:"type:text" json:"profilePhotoUrl,omitempty"`
 	DocumentsURL    string     `gorm:"type:text" json:"documentsUrl,omitempty"`
 	Status          string     `gorm:"size:30;not null;default:'PENDING'" json:"status"` // PENDING, APPROVED, REJECTED

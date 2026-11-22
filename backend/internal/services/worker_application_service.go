@@ -31,8 +31,13 @@ type PublicApplicationInput struct {
 	Area            string `json:"area"`
 	Address         string `json:"address"`
 	Bio             string `json:"bio"`
+	AvailableFrom   string `json:"availableFrom"`
+	AvailableTo     string `json:"availableTo"`
+	AvailableDays   string `json:"availableDays"`
+	DocumentType    string `json:"documentType"`
 	ProfilePhotoURL string `json:"profilePhotoUrl"`
 	DocumentsURL    string `json:"documentsUrl"`
+	DocumentURL     string `json:"documentUrl"`
 }
 
 func (s *WorkerApplicationService) SubmitApplication(input PublicApplicationInput) (*models.WorkerApplication, error) {
@@ -43,6 +48,11 @@ func (s *WorkerApplicationService) SubmitApplication(input PublicApplicationInpu
 
 	if fullName == "" || phone == "" || category == "" || city == "" {
 		return nil, errors.New("full name, phone, service category, and city are required")
+	}
+
+	docURL := strings.TrimSpace(input.DocumentURL)
+	if docURL == "" {
+		docURL = strings.TrimSpace(input.DocumentsURL)
 	}
 
 	app := models.WorkerApplication{
@@ -56,8 +66,13 @@ func (s *WorkerApplicationService) SubmitApplication(input PublicApplicationInpu
 		Area:            strings.TrimSpace(input.Area),
 		Address:         strings.TrimSpace(input.Address),
 		Bio:             strings.TrimSpace(input.Bio),
-		ProfilePhotoURL: input.ProfilePhotoURL,
-		DocumentsURL:    input.DocumentsURL,
+		AvailableFrom:   strings.TrimSpace(input.AvailableFrom),
+		AvailableTo:     strings.TrimSpace(input.AvailableTo),
+		AvailableDays:   strings.TrimSpace(input.AvailableDays),
+		DocumentType:    strings.TrimSpace(input.DocumentType),
+		ProfilePhotoURL: strings.TrimSpace(input.ProfilePhotoURL),
+		DocumentsURL:    docURL,
+		DocumentURL:     docURL,
 		Status:          "PENDING",
 		AppliedAt:       time.Now().UTC(),
 		CreatedAt:       time.Now().UTC(),
@@ -131,6 +146,10 @@ func (s *WorkerApplicationService) ApproveApplication(id uint, adminID uint, not
 		}
 
 		// 2. Create official Worker record
+		docURL := app.DocumentURL
+		if docURL == "" {
+			docURL = app.DocumentsURL
+		}
 		worker = models.Worker{
 			Name:            app.FullName,
 			Phone:           app.Phone,
@@ -141,6 +160,14 @@ func (s *WorkerApplicationService) ApproveApplication(id uint, adminID uint, not
 			City:            app.City,
 			Area:            app.Area,
 			Address:         app.Address,
+			Bio:             app.Bio,
+			AvailableFrom:   app.AvailableFrom,
+			AvailableTo:     app.AvailableTo,
+			AvailableDays:   app.AvailableDays,
+			DocumentType:    app.DocumentType,
+			DocumentURL:     docURL,
+			DocumentsURL:    docURL,
+			ProfilePhotoURL: app.ProfilePhotoURL,
 			VisitFee:        19900, // 199 rupees
 			Available:       true,
 			ServiceRadiusKm: 15,

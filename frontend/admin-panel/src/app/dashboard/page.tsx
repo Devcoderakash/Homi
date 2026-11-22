@@ -354,45 +354,66 @@ export default function DashboardPage() {
 
           {recentApplications.length === 0 ? (
             <div className="py-12 text-center text-xs text-[#718078]">
-              No worker job proposals submitted yet.
+              No worker applications submitted yet.
             </div>
           ) : (
             <div className="divide-y divide-[#f0f4ee] overflow-hidden">
-              {recentApplications.slice(0, 5).map((app) => (
-                <div
-                  key={app.id}
-                  className="py-3 px-2 -mx-2 rounded-lg hover:bg-[#f8faf5] transition-colors flex items-center justify-between gap-3"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-5 h-5 rounded-full bg-[#123b30] text-[#d9ed89] font-extrabold text-[10px] flex items-center justify-center shrink-0">
-                        {app.workerName?.charAt(0) || "W"}
-                      </div>
-                      <span className="text-xs font-extrabold text-[#183c31] truncate">
-                        {app.workerName}
-                      </span>
-                      <StatusBadge status={app.status} />
-                    </div>
-                    <p className="text-xs text-[#718078] truncate">
-                      Applied for Request #{app.requestId} • <span className="capitalize">{app.category || "Service"}</span>
-                    </p>
-                    <div className="flex items-center gap-3 mt-1 text-[11px] text-[#8fa094]">
-                      <span className="font-bold text-[#183c31]">
-                        Quote: {app.expectedCharges ? formatRupees(app.expectedCharges) : "Standard"}
-                      </span>
-                      <span>•</span>
-                      <span>{formatDateTime(app.appliedAt)}</span>
-                    </div>
-                  </div>
+              {recentApplications.slice(0, 6).map((app) => {
+                const name = app.fullName || app.workerName || `Applicant #${app.id}`;
+                const hasTiming = app.availableFrom || app.availableTo;
+                const hasDoc = Boolean(app.documentUrl || app.documentsUrl);
 
-                  <Link
-                    href={`/applications?requestId=${app.requestId}`}
-                    className="btn btn-outline px-2.5 py-1 text-[11px] font-bold text-[#123b30] shrink-0"
+                return (
+                  <div
+                    key={app.id}
+                    className="py-3 px-2 -mx-2 rounded-lg hover:bg-[#f8faf5] transition-colors flex items-center justify-between gap-3"
                   >
-                    Evaluate
-                  </Link>
-                </div>
-              ))}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        {app.profilePhotoUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img 
+                            src={app.profilePhotoUrl} 
+                            alt="" 
+                            className="w-5 h-5 rounded-full object-cover border border-[#c5d3c1] shrink-0" 
+                          />
+                        ) : (
+                          <div className="w-5 h-5 rounded-full bg-[#123b30] text-[#d9ed89] font-extrabold text-[10px] flex items-center justify-center shrink-0">
+                            {name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <span className="text-xs font-extrabold text-[#183c31] truncate">
+                          {name}
+                        </span>
+                        <StatusBadge status={app.status} />
+                      </div>
+                      <p className="text-xs text-[#718078] truncate">
+                        <span className="capitalize font-medium text-[#183c31]">{app.category || "Service"}</span> • {app.city || "Bhopal"}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-[#557e62]">
+                        {hasTiming && (
+                          <span className="bg-[#f0f4ee] px-1.5 py-0.5 rounded font-bold text-[#183c31]">
+                            ⏰ {app.availableFrom || "09:00 AM"} - {app.availableTo || "07:00 PM"}
+                          </span>
+                        )}
+                        {hasDoc && (
+                          <span className="bg-[#eaf3dd] px-1.5 py-0.5 rounded font-bold text-[#225746]">
+                            ✓ {app.documentType || "ID Document"}
+                          </span>
+                        )}
+                        <span>{formatDateTime(app.appliedAt || app.createdAt)}</span>
+                      </div>
+                    </div>
+
+                    <Link
+                      href="/applications"
+                      className="btn btn-outline px-2.5 py-1 text-[11px] font-bold text-[#123b30] shrink-0"
+                    >
+                      View & Verify
+                    </Link>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
