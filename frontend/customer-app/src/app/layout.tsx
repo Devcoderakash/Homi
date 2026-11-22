@@ -23,6 +23,13 @@ const manrope = Manrope({
   weight: ["400", "500", "600", "700", "800"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#123b30",
+};
+
 export const metadata: Metadata = {
   title: "homi. — Ghar ka kaam, aasaan",
   description: "Send a simple household repair request in your own language. Connect directly with local plumbers, electricians, carpenters and other workers in India. No signup needed to request help.",

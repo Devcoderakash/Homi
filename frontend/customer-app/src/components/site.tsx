@@ -182,6 +182,17 @@ export function Header() {
     };
   }, [menuOpen]);
 
+  // Close drawer on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && menuOpen) {
+        setMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen]);
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
@@ -190,7 +201,7 @@ export function Header() {
         <div className="container header-inner">
           <Logo />
           
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation (visible >= 1024px) */}
           <nav className="header-nav hidden lg:flex" aria-label="Main navigation">
             <Link href="/#services">Services</Link>
             <Link href="/workers">Find Local Workers</Link>
@@ -199,36 +210,38 @@ export function Header() {
           </nav>
 
           <div className="header-actions">
-            <div className="hidden sm:inline-flex">
+            {/* Desktop Language Picker */}
+            <div className="hidden lg:inline-flex">
               <LanguagePicker />
             </div>
+
+            {/* Desktop Account Link */}
             <Link
               href={user ? "/customer" : "/login"}
-              className="header-account hidden sm:inline-flex"
+              className="header-account hidden lg:inline-flex"
             >
               {user ? (user.name ? user.name.split(" ")[0] : "Dashboard") : "Sign In"}
             </Link>
-            <Link href="/book" className="btn btn-dark header-cta hidden sm:inline-flex">
-              {t("sendRequest")} <ArrowRight size={16} />
+
+            {/* Primary CTA (Always visible on all screen sizes, touch-friendly min 44px) */}
+            <Link 
+              href="/book" 
+              className="btn btn-dark header-cta"
+              aria-label="Send a Service Request"
+            >
+              <span className="hidden xs:inline sm:inline">{t("sendRequest")}</span>
+              <span className="inline xs:hidden sm:hidden">Request</span>
+              <ArrowRight size={15} />
             </Link>
             
-            {/* Mobile Hamburger Toggle */}
+            {/* Hamburger Toggle (Visible < 1024px) */}
             <button
-              className="menu-button"
+              type="button"
+              className="menu-button lg:hidden"
               onClick={() => setMenuOpen((prev) => !prev)}
               aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={menuOpen}
-              style={{
-                width: 44,
-                height: 44,
-                display: "inline-grid",
-                placeItems: "center",
-                background: "transparent",
-                border: 0,
-                color: "#123b30",
-                cursor: "pointer",
-                borderRadius: 8,
-              }}
+              aria-controls="mobile-nav-drawer"
             >
               {menuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -247,7 +260,8 @@ export function Header() {
 
       {/* Mobile Drawer Panel */}
       <div
-        className={`fixed top-0 right-0 bottom-0 z-50 w-72 max-w-[85vw] bg-white text-[#183c31] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
+        id="mobile-nav-drawer"
+        className={`fixed top-0 right-0 bottom-0 z-50 w-80 max-w-[85vw] bg-white text-[#183c31] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
         style={{
@@ -256,15 +270,16 @@ export function Header() {
         }}
         aria-modal="true"
         role="dialog"
+        aria-label="Mobile Navigation"
       >
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#e5ebe4]">
           <Logo />
           <button
+            type="button"
             onClick={closeMenu}
-            className="p-2 -mr-2 text-[#718078] hover:text-[#123b30] rounded-lg transition-colors"
+            className="p-2 -mr-2 text-[#718078] hover:text-[#123b30] rounded-lg transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
             aria-label="Close menu"
-            style={{ width: 44, height: 44, display: "grid", placeItems: "center" }}
           >
             <X size={22} />
           </button>
@@ -343,7 +358,7 @@ export function Header() {
               >
                 <div className="flex items-center gap-3">
                   <User size={18} className="text-[#557e62]" />
-                  <span>Customer Sign In</span>
+                  <span>Sign In</span>
                 </div>
                 <ChevronRight size={16} className="text-[#a0b0a4]" />
               </Link>
@@ -351,10 +366,10 @@ export function Header() {
           </div>
         </div>
 
-        {/* Drawer Footer Actions */}
+        {/* Drawer Footer Actions with Language Picker & Full-Width CTA */}
         <div className="px-5 py-4 border-t border-[#e5ebe4] space-y-3 bg-[#f8faf5]">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#718078]">Language</span>
+            <span className="text-xs font-bold text-[#718078]">Language / भाषा</span>
             <LanguagePicker />
           </div>
           <Link
@@ -376,7 +391,7 @@ export function Footer() {
     <footer className="footer">
       <div className="container">
         <div className="footer-top">
-          <div>
+          <div className="footer-brand">
             <Logo />
             <p>
               Everyday household help, simple and close to home.

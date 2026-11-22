@@ -166,22 +166,26 @@ export default function HomePage() {
                 />
               </div>
               <div className="hero-image-shade" />
-              <div className="hero-photo-label">
-                <span className="label-check">
-                  <Check size={19} strokeWidth={3} />
-                </span>
-                <span>
-                  <strong>Quality care for your home</strong>
-                  <small>Verified local technicians ready</small>
-                </span>
-              </div>
-              <div className="floating-card">
-                <div className="float-icon">
-                  <Handshake size={23} />
+              
+              {/* Badges: Floating on desktop, static clean cards below image on mobile */}
+              <div className="hero-badges-wrapper">
+                <div className="hero-photo-label">
+                  <span className="label-check">
+                    <Check size={19} strokeWidth={3} />
+                  </span>
+                  <span>
+                    <strong>Quality care for your home</strong>
+                    <small>Verified local technicians ready</small>
+                  </span>
                 </div>
-                <div>
-                  <strong>Local professionals ready</strong>
-                  <span>Fast response in your area</span>
+                <div className="floating-card">
+                  <div className="float-icon">
+                    <Handshake size={23} />
+                  </div>
+                  <div>
+                    <strong>Local professionals ready</strong>
+                    <span>Fast response in your area</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -283,8 +287,8 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div style={{ textAlign: "center", marginTop: 42 }}>
-              <Link href="/book" className="btn btn-dark" style={{ padding: "16px 28px", fontSize: 15 }}>
+            <div className="steps-cta-wrap">
+              <Link href="/book" className="btn btn-dark steps-cta">
                 Send a Request <ArrowRight size={18} />
               </Link>
             </div>
@@ -342,7 +346,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 24 }}>
+              <div className="why-actions">
                 <Link href="/workers" className="btn btn-dark">
                   Find Local Workers <ArrowRight size={17} />
                 </Link>
