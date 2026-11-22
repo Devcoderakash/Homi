@@ -155,16 +155,27 @@ func (s *RequestService) CreateRequest(customerID uint, input CreateRequestInput
 			return err
 		}
 
-		// Create notification for admin
+		// Create notification for admin (best-effort: skip if no admin user exists yet)
 		adminID := utils.GetDefaultAdminID(s.db)
-		notify := models.Notification{
-			UserID:    adminID, // Admin notification
-			RequestID: &req.ID,
-			Kind:      "new_request",
-			Title:     fmt.Sprintf("New Request #HOMI-%d: %s in %s", req.ID, req.Category, req.City),
-			CreatedAt: time.Now().UTC(),
+		if adminID > 0 {
+			// Verify the admin user actually exists before inserting notification
+			var adminExists int64
+			tx.Model(&models.User{}).Where("id = ?", adminID).Count(&adminExists)
+			if adminExists > 0 {
+				notify := models.Notification{
+					UserID:    adminID,
+					RequestID: &req.ID,
+					Kind:      "new_request",
+					Title:     fmt.Sprintf("New Request #HOMI-%d: %s in %s", req.ID, req.Category, req.City),
+					CreatedAt: time.Now().UTC(),
+				}
+				// Non-blocking: log error but don't fail the whole request
+				if err := tx.Create(&notify).Error; err != nil {
+					fmt.Printf("[WARN] Could not create admin notification: %v\n", err)
+				}
+			}
 		}
-		return tx.Create(&notify).Error
+		return nil
 	})
 
 	if err != nil {
