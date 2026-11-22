@@ -10,7 +10,10 @@ import {
   Clock, 
   IndianRupee, 
   ShieldCheck, 
-  ArrowUpRight 
+  ArrowUpRight,
+  Zap,
+  House,
+  ClipboardCheck
 } from "lucide-react";
 import { Footer, Header } from "@/components/site";
 
@@ -19,7 +22,148 @@ export default function GuidePage() {
     <>
       <Header />
       <main className="inner-page">
-        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        {/* MOBILE VIEW (< 1024px): Matches target design media_1795354561132_fb247a8b.jpg */}
+        <div className="mobile-how-section block lg:hidden">
+          {/* Top-Right Decorative Phone Graphic */}
+          <div className="mobile-how-phone-decor" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/how-it-works-phone-transparent.png"
+              alt=""
+              width={175}
+              height={215}
+              className="mobile-how-phone-img"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="mobile-how-header-content">
+            {/* Eyebrow badge */}
+            <div className="mobile-how-eyebrow">
+              <Zap size={13} strokeWidth={2.4} />
+              <span>HOW IT WORKS</span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="mobile-how-headline">
+              No long forms.
+              <span>
+                No running around.
+                <svg className="mobile-how-swoop" viewBox="0 0 170 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 7.5C45 2 125 2 168 7.5" stroke="#7aa93c" strokeWidth="3.2" strokeLinecap="round" />
+                </svg>
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="mobile-how-desc">
+              Three simple steps to connect with trusted local professionals.
+            </p>
+          </div>
+
+          {/* Steps Timeline (01, 02, 03) */}
+          <div className="mobile-how-steps-list">
+            {/* Step 1 */}
+            <div className="mobile-how-step-item">
+              <div className="mobile-how-step-card">
+                <div className="mobile-how-step-badge badge-01">01</div>
+                <div className="mobile-how-step-icon icon-01">
+                  <MessageCircle size={22} strokeWidth={1.8} />
+                </div>
+                <div className="mobile-how-step-text">
+                  <strong>Tell us the problem.</strong>
+                  <p>Choose a service, describe the issue and share your location.</p>
+                </div>
+              </div>
+              <div className="mobile-how-step-line" aria-hidden="true" />
+            </div>
+
+            {/* Step 2 */}
+            <div className="mobile-how-step-item">
+              <div className="mobile-how-step-card">
+                <div className="mobile-how-step-badge badge-02">02</div>
+                <div className="mobile-how-step-icon icon-02">
+                  <Phone size={22} strokeWidth={1.8} />
+                </div>
+                <div className="mobile-how-step-text">
+                  <strong>We help connect you.</strong>
+                  <p>Your request is received and reviewed by the Homi team.</p>
+                </div>
+              </div>
+              <div className="mobile-how-step-line" aria-hidden="true" />
+            </div>
+
+            {/* Step 3 */}
+            <div className="mobile-how-step-item">
+              <div className="mobile-how-step-card">
+                <div className="mobile-how-step-badge badge-03">03</div>
+                <div className="mobile-how-step-icon icon-03">
+                  <ClipboardCheck size={22} strokeWidth={1.8} />
+                </div>
+                <div className="mobile-how-step-text">
+                  <strong>Track your request.</strong>
+                  <p>Log in to your customer dashboard to check its latest status.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* "Quick, simple and local." House Promo Banner */}
+          <div className="mobile-house-promo-banner">
+            <div className="mobile-house-art" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/banner-house.png"
+                alt=""
+                width={110}
+                height={80}
+                className="mobile-house-banner-img"
+                loading="lazy"
+              />
+            </div>
+            <div className="mobile-house-banner-divider" aria-hidden="true" />
+            <div className="mobile-house-banner-content">
+              <h4>Quick, simple and local.</h4>
+              <p>Get your home problems solved without the hassle.</p>
+            </div>
+          </div>
+
+          {/* Full-Width Action Button */}
+          <Link href="/book" className="mobile-how-submit-btn">
+            <span>Send a Request</span>
+            <ArrowRight size={16} />
+          </Link>
+
+          {/* Trust Badges */}
+          <div className="mobile-trust-badges">
+            <div className="mobile-trust-badge-item">
+              <ShieldCheck size={22} className="mobile-trust-icon" strokeWidth={1.8} />
+              <div className="mobile-trust-text">
+                <strong>Verified Pros</strong>
+                <small>Background checked</small>
+              </div>
+            </div>
+
+            <div className="mobile-trust-badge-item">
+              <Zap size={22} className="mobile-trust-icon" strokeWidth={1.8} />
+              <div className="mobile-trust-text">
+                <strong>Quick Response</strong>
+                <small>In your area</small>
+              </div>
+            </div>
+
+            <div className="mobile-trust-badge-item">
+              <House size={22} className="mobile-trust-icon" strokeWidth={1.8} />
+              <div className="mobile-trust-text">
+                <strong>Home Friendly</strong>
+                <small>Reliable &amp; safe</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* DESKTOP VIEW (>= 1024px): Full desktop layout untouched */}
+        <div className="container max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12 hidden lg:block">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
             <span
