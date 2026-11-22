@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 114 36" width="114" height="36" fill="none">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@800&amp;display=swap');
+    .homi-brand-text {
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 29px;
+      font-weight: 800;
+      letter-spacing: -0.09em;
+      fill: #123b30;
+    }
+    .homi-brand-dot {
+      fill: #a1c347;
+    }
+  </style>
+  <!-- Signature Homi Tilted Squircle Badge -->
+  <rect x="2.5" y="2.5" width="31" height="31" rx="9" fill="#123b30" transform="rotate(-8 18 18)" />
+  <!-- Upright Lime House Outline & Door Arch -->
+  <g transform="translate(6, 6)">
+    <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" stroke="#d9ed89" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#d9ed89" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  </g>
+  <!-- Wordmark "homi." -->
+  <text x="39" y="26.5" class="homi-brand-text">homi<tspan class="homi-brand-dot">.</tspan></text>
+</svg>

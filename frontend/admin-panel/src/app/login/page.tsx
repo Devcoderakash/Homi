@@ -43,10 +43,9 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center gap-2 mb-3">
-            <div className="logo-icon bg-[#123b30] text-[#d9ed89] p-2 rounded-lg">
-              <Wrench size={18} />
-            </div>
+          <div className="inline-flex items-center justify-center gap-2.5 mb-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/logo-icon.svg" alt="homi" width={36} height={36} className="shrink-0" />
             <span className="text-3xl font-extrabold text-[#123b30] tracking-tight font-['Manrope']">
               homi<span className="text-[#a1c347]">.</span>
             </span>

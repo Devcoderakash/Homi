@@ -77,9 +77,8 @@ export function AdminSidebar({ mobileOpen = false, onMobileClose }: AdminSidebar
                 onClick={handleLinkClick}
                 className="flex items-center gap-2.5 overflow-hidden"
               >
-                <div className="logo-icon shrink-0">
-                  <Wrench size={16} />
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/logo-icon.svg" alt="homi" width={28} height={28} className="shrink-0" />
                 <div className="flex items-center gap-2">
                   <span className="font-extrabold text-white text-lg tracking-tight font-['Manrope']">
                     homi<span className="text-[#a1c347]">.</span>
@@ -179,9 +178,8 @@ export function AdminSidebar({ mobileOpen = false, onMobileClose }: AdminSidebar
         {/* Brand Header */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-[#153f33]">
           <Link href="/dashboard" className="flex items-center gap-2.5 overflow-hidden">
-            <div className="logo-icon shrink-0">
-              <Wrench size={16} />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/logo-icon.svg" alt="homi" width={28} height={28} className="shrink-0" />
             {!collapsed && (
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-white text-lg tracking-tight font-['Manrope']">

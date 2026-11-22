@@ -32,6 +32,11 @@ export const viewport = {
 export const metadata: Metadata = {
   title: "homi. — Ghar ka kaam, aasaan",
   description: "Send a simple household repair request in your own language. Connect directly with local plumbers, electricians, carpenters and other workers in India. No signup needed to request help.",
+  icons: {
+    icon: "/images/logo-icon.svg",
+    shortcut: "/images/logo-icon.svg",
+    apple: "/images/logo-icon.svg",
+  },
 };
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

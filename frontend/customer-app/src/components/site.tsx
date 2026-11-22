@@ -165,7 +165,36 @@ export function useCurrentUser() {
 
   return { user, loading };
 }
-export function Logo() { return <Link href="/" className="logo-mark" aria-label="homi home"><span className="logo-icon"><House size={21} strokeWidth={2.7} /></span><span>homi<span className="logo-dot">.</span></span></Link>; }
+export function HomiIcon({ size = 31, className = "" }: { size?: number; className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 36 36"
+      width={size}
+      height={size}
+      fill="none"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* Signature Homi Tilted Squircle Badge */}
+      <rect x="2.5" y="2.5" width="31" height="31" rx="9" fill="#123b30" transform="rotate(-8 18 18)" />
+      {/* Upright Lime House Outline & Door Arch */}
+      <g transform="translate(6, 6)">
+        <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" stroke="#d9ed89" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#d9ed89" strokeWidth="2.7" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      </g>
+    </svg>
+  );
+}
+
+export function Logo({ href = "/", showText = true, className = "" }: { href?: string; showText?: boolean; className?: string }) {
+  return (
+    <Link href={href} className={`logo-mark ${className}`} aria-label="homi home">
+      <HomiIcon size={31} />
+      {showText && <span>homi<span className="logo-dot">.</span></span>}
+    </Link>
+  );
+}
 export function Header() {
   const { user } = useCurrentUser();
   const { t } = useLanguage();

@@ -18,6 +18,11 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "homi — Admin Control Panel",
   description: "Management and monitoring dashboard for homi platform administrators.",
+  icons: {
+    icon: "/images/logo-icon.svg",
+    shortcut: "/images/logo-icon.svg",
+    apple: "/images/logo-icon.svg",
+  },
 };
 
 export default function RootLayout({
