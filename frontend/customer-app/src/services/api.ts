@@ -5,7 +5,11 @@
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  (typeof window !== "undefined" ? "/api" : "http://localhost:4000/api");
+  (typeof window !== "undefined"
+    ? "/api"
+    : process.env.NODE_ENV === "production"
+    ? "https://homi-v3nj.onrender.com/api"
+    : "http://localhost:4000/api");
 
 export class ApiClientError extends Error {
   constructor(public status: number, message: string, public data?: unknown) {

@@ -3,14 +3,14 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl =
   process.env.NEXT_PUBLIC_SUPABASE_URL ||
   process.env.VITE_SUPABASE_URL ||
-  "https://placeholder-project.supabase.co";
+  "https://lgwwkkjbgdwmsubjagva.supabase.co";
 
 const supabaseAnonKey =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
   process.env.VITE_SUPABASE_ANON_KEY ||
-  "";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxnd3dra2piZ2R3bXN1YmphZ3ZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUyMzMxNTIsImV4cCI6MjExMDgwOTE1Mn0.GwTEphXD8pMwMUJOJB0VtMl9O3t9s-Dt9TJR1-3V-JY";
 
 export const isSupabaseConfigured = () => {
   return (

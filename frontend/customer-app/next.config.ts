@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 import path from "node:path";
 
-const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+const rawBackend =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://homi-v3nj.onrender.com/api"
+    : "http://localhost:4000/api");
+
+const backendUrl = rawBackend.trim().replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
