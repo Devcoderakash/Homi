@@ -946,18 +946,55 @@ button:disabled{cursor:wait;opacity:.65}button:focus-visible,a:focus-visible,sel
 
 @media (max-width: 640px) {
   .dash-topbar {
-    height: 64px !important;
-    padding: 0 14px !important;
+    height: 60px !important;
+    padding: 0 12px !important;
+    overflow: hidden !important;
   }
   .dash-topbar-left {
     gap: 8px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    align-items: center !important;
+    display: flex !important;
+  }
+  /* Show breadcrumb on mobile (override the minified display:none) */
+  .dash-breadcrumb {
+    display: flex !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    align-items: center !important;
+    gap: 6px !important;
   }
   .breadcrumb-brand,
   .breadcrumb-divider {
     display: none !important;
   }
   .breadcrumb-current {
-    font-size: 14px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #123b30 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 140px !important;
+    display: block !important;
+  }
+  /* Keep dash-mobile-logo visible outside breadcrumb */
+  .dash-mobile-logo {
+    display: flex !important;
+    flex-shrink: 0 !important;
+  }
+  /* Compact top-actions on mobile */
+  .dash-top-actions {
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+  /* Hide "Back to home" text link on mobile */
+  .dash-home-link {
+    display: none !important;
   }
   .dash-body {
     padding: 18px 14px 96px !important;

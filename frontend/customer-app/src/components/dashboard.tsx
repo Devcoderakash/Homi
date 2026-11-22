@@ -173,10 +173,10 @@ export function DashboardShell({
               <Menu size={22} />
             </button>
 
+            {/* Logo shown on mobile only, outside breadcrumb */}
+            <Logo className="dash-mobile-logo" showText={false} />
+
             <div className="dash-breadcrumb">
-              <Link href="/" className="dash-mobile-logo">
-                <Logo />
-              </Link>
               <span className="breadcrumb-brand">homi</span>
               <span className="breadcrumb-divider">/</span>
               <strong className="breadcrumb-current">
