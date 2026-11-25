@@ -30,9 +30,46 @@ export const viewport = {
   themeColor: "#123b30",
 };
 
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://homi-kappa.vercel.app")
+).replace(/\/+$/, "");
+
+const socialBannerUrl = `${siteUrl}/images/homi-promo-banner.jpg`;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "homi. — Ghar ka kaam, aasaan",
-  description: "Send a simple household repair request in your own language. Connect directly with local plumbers, electricians, carpenters and other workers in India. No signup needed to request help.",
+  description:
+    "Send a simple household repair request in your own language. Connect directly with local plumbers, electricians, carpenters and other workers in India. No signup needed to request help.",
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    siteName: "homi.",
+    locale: "en_IN",
+    title: "Homi — Your Neighbourhood, Your Help",
+    description:
+      "Ghar ka kaam? Find help near you. Trusted local professionals for Plumbing, Electrical, Carpentry, Painting and Home Repairs.",
+    images: [
+      {
+        url: socialBannerUrl,
+        secureUrl: socialBannerUrl,
+        width: 1002,
+        height: 658,
+        type: "image/jpeg",
+        alt: "Homi — Your Neighbourhood, Your Help. Ghar ka kaam? Find help near you.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Homi — Your Neighbourhood, Your Help",
+    description:
+      "Ghar ka kaam? Find help near you. Trusted local professionals for every home repair and service.",
+    images: [socialBannerUrl],
+  },
   icons: {
     icon: "/images/logo-icon.svg",
     shortcut: "/images/logo-icon.svg",

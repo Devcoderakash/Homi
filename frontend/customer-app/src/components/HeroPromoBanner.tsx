@@ -26,11 +26,11 @@ export function HeroPromoBanner() {
       aria-labelledby="homi-promo-banner-heading"
     >
       <div className="homi-promo-band-inner">
-        <h2 id="homi-promo-banner-heading" className="sr-only">
+        <h1 id="homi-promo-banner-heading" className="sr-only">
           Homi — Your Neighbourhood, Your Help. Ghar ka kaam? Find help near you.
-          Trusted local professionals for Plumbing, Electrical, Carpentry,
-          Painting, and Home Repairs.
-        </h2>
+          Trusted local professionals for every home repair and service,
+          including Plumbing, Electrical, Carpentry, Painting, and Home Repairs.
+        </h1>
 
         {/* DESKTOP VIEW (>= 1024px): Complete horizontal campaign artwork with crisp interactive CTA */}
         <div className="homi-promo-desktop hidden lg:block">
@@ -42,6 +42,7 @@ export function HeroPromoBanner() {
               width={1002}
               height={658}
               loading="eager"
+              fetchPriority="high"
               decoding="async"
               className="homi-promo-desktop-img"
             />
@@ -66,7 +67,7 @@ export function HeroPromoBanner() {
                   <Logo />
                 </div>
 
-                <h3 className="homi-promo-mobile-title">
+                <h2 className="homi-promo-mobile-title">
                   Ghar ka kaam?
                   <span className="homi-promo-mobile-accent">
                     Find help near you.
@@ -85,10 +86,10 @@ export function HeroPromoBanner() {
                       />
                     </svg>
                   </span>
-                </h3>
+                </h2>
 
                 <p className="homi-promo-mobile-subtitle">
-                  Trusted local professionals for everyday home repairs.
+                  Trusted local professionals for every home repair and service.
                 </p>
 
                 {/* Mobile Visual Showcase placed naturally below headline on phones; moves to right column on tablet */}
@@ -99,7 +100,8 @@ export function HeroPromoBanner() {
                     alt="Homi app interface and verified local plumber fixing a kitchen sink"
                     width={486}
                     height={508}
-                    loading="lazy"
+                    loading="eager"
+                    fetchPriority="high"
                     decoding="async"
                     className="homi-promo-visual-img"
                   />
@@ -141,7 +143,8 @@ export function HeroPromoBanner() {
                   alt=""
                   width={486}
                   height={508}
-                  loading="lazy"
+                  loading="eager"
+                  fetchPriority="high"
                   decoding="async"
                   className="homi-promo-visual-img"
                 />

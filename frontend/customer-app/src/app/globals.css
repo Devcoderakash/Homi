@@ -1813,8 +1813,8 @@ button, .btn, a.btn {
 
 /* Hero Promotional Brand Banner */
 .homi-promo-band {
-  background: #ffffff;
-  padding: 52px 0 36px;
+  background: linear-gradient(180deg, #f6f9f1 0%, #ffffff 100%);
+  padding: 32px 0 40px;
 }
 
 .homi-promo-band-inner {
@@ -1895,7 +1895,7 @@ button, .btn, a.btn {
   background: linear-gradient(180deg, #ffffff 0%, #f8faf4 100%);
   border: 1px solid #e2ebe0;
   border-radius: 22px;
-  padding: 20px 18px;
+  padding: 18px 16px;
   box-shadow: 0 16px 42px rgba(18, 59, 48, 0.09);
   overflow: hidden;
 }
@@ -1905,21 +1905,22 @@ button, .btn, a.btn {
 }
 
 .homi-promo-mobile-logo {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .homi-promo-mobile-title {
   font-family: var(--font-manrope), 'Manrope', sans-serif;
-  font-size: clamp(25px, 6.8vw, 36px);
+  font-size: clamp(23px, 6.4vw, 34px);
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -0.04em;
   color: #123b30;
-  margin: 0 0 10px;
+  margin: 0 0 7px;
 }
 
 .homi-promo-mobile-accent {
-  display: inline-block;
+  display: block;
+  width: fit-content;
   color: #8bb435;
   position: relative;
   padding-bottom: 5px;
@@ -1936,20 +1937,21 @@ button, .btn, a.btn {
 }
 
 .homi-promo-mobile-subtitle {
-  font-size: 13.5px;
-  line-height: 1.55;
+  font-size: 13px;
+  line-height: 1.5;
   color: #5b6d62;
-  margin: 0 0 16px;
+  margin: 0 0 13px;
 }
 
 .homi-promo-mobile-visual-inline {
   width: 100%;
+  max-width: 268px;
   aspect-ratio: 486 / 508;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid #e5ede2;
   background: #f2f6ee;
-  margin-bottom: 16px;
+  margin: 0 auto 14px;
   box-shadow: 0 8px 22px rgba(18, 59, 48, 0.08);
 }
 
@@ -2062,51 +2064,78 @@ button, .btn, a.btn {
 
 /* Small Mobile (320px - 375px) */
 @media (max-width: 375px) {
+  .site-header .logo-mark {
+    font-size: 22px;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .header-cta {
+    padding: 6px 11px !important;
+    font-size: 12px !important;
+  }
   .homi-promo-band {
-    padding: 18px 0 22px;
+    padding: 12px 0 20px;
   }
   .homi-promo-band-inner {
     width: calc(100% - 24px);
   }
   .homi-promo-mobile-card {
-    padding: 16px 14px;
+    padding: 15px 14px;
     border-radius: 18px;
   }
   .homi-promo-mobile-title {
-    font-size: 24px;
+    font-size: 22.5px;
   }
   .homi-promo-mobile-subtitle {
     font-size: 12.5px;
+    margin-bottom: 11px;
+  }
+  .homi-promo-mobile-visual-inline {
+    max-width: 236px;
+    margin-bottom: 12px;
   }
   .homi-promo-service-tile {
     min-width: 78px;
-    padding: 9px 4px;
+    padding: 8px 4px;
   }
   .homi-promo-service-tile span {
     font-size: 10px;
+  }
+  .homi-promo-mobile-footer {
+    margin-top: 14px;
+    padding-top: 12px;
+    gap: 11px;
   }
 }
 
 /* Standard Mobile (376px - 430px) */
 @media (min-width: 376px) and (max-width: 430px) {
   .homi-promo-band {
-    padding: 20px 0 24px;
+    padding: 14px 0 22px;
   }
   .homi-promo-band-inner {
     width: calc(100% - 32px);
+  }
+  .homi-promo-mobile-footer {
+    margin-top: 14px;
+    padding-top: 13px;
+    gap: 11px;
   }
 }
 
 /* Large Mobile (431px - 767px) */
 @media (min-width: 431px) and (max-width: 767px) {
   .homi-promo-band {
-    padding: 28px 0 28px;
+    padding: 22px 0 28px;
   }
   .homi-promo-band-inner {
     width: calc(100% - 40px);
   }
   .homi-promo-mobile-card {
-    padding: 24px 22px;
+    padding: 22px 20px;
+  }
+  .homi-promo-mobile-visual-inline {
+    max-width: 340px;
   }
 }
 
@@ -2186,18 +2215,21 @@ button, .btn, a.btn {
 }
 
 /* Laptop (1024px - 1440px) & Desktop (1441px+) */
-@media (min-width: 1024px) and (max-width: 1180px) {
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .homi-promo-band {
+    padding: 26px 0 38px;
+  }
   .homi-promo-band-inner {
-    width: min(100% - 52px, 1140px);
+    width: min(100% - 56px, 1140px, max(760px, calc((100dvh - 152px) * 1.522)));
   }
 }
 
 @media (min-width: 1441px) {
   .homi-promo-band {
-    padding: 64px 0 44px;
+    padding: 40px 0 48px;
   }
   .homi-promo-band-inner {
-    max-width: 1180px;
+    width: min(100% - 80px, 1180px, max(820px, calc((100dvh - 172px) * 1.522)));
   }
 }
 
