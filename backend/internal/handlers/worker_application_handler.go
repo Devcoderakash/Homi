@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -24,6 +25,15 @@ func (h *WorkerApplicationHandler) SubmitApplication(c *gin.Context) {
 	var input services.PublicApplicationInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.SendBadRequest(c, err.Error())
+		return
+	}
+
+	// Anti-bot honeypot check
+	if strings.TrimSpace(input.Honeypot) != "" {
+		c.JSON(http.StatusCreated, gin.H{
+			"ok":      true,
+			"message": "Your application has been received.",
+		})
 		return
 	}
 

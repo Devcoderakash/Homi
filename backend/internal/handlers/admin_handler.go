@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"homi-backend/internal/models"
+	"homi-backend/internal/middleware"
 	"homi-backend/internal/services"
 	"homi-backend/internal/utils"
 )
@@ -83,7 +83,31 @@ func (h *AdminHandler) ListActivityLogs(c *gin.Context) {
 	})
 }
 
-// ListCategories returns available service categories
+func currentAdminAuditContext(c *gin.Context) (*uint, string) {
+	user := middleware.GetCurrentUser(c)
+	var adminID *uint
+	if user != nil {
+		id := user.ID
+		adminID = &id
+	}
+	return adminID, c.ClientIP()
+}
+
+// ListPublicCategories returns only active service categories for customer-facing apps
+func (h *AdminHandler) ListPublicCategories(c *gin.Context) {
+	categories, err := h.adminSvc.ListActiveCategories()
+	if err != nil {
+		utils.SendInternalError(c, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"ok":         true,
+		"categories": categories,
+	})
+}
+
+// ListCategories returns all service categories (active & disabled) for admins
 func (h *AdminHandler) ListCategories(c *gin.Context) {
 	categories, err := h.adminSvc.ListCategories()
 	if err != nil {
@@ -99,13 +123,14 @@ func (h *AdminHandler) ListCategories(c *gin.Context) {
 
 // CreateCategory adds a new service category
 func (h *AdminHandler) CreateCategory(c *gin.Context) {
-	var cat models.Category
-	if err := c.ShouldBindJSON(&cat); err != nil {
+	var input services.CategoryInput
+	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.SendBadRequest(c, err.Error())
 		return
 	}
 
-	created, err := h.adminSvc.CreateCategory(cat)
+	adminID, ip := currentAdminAuditContext(c)
+	created, err := h.adminSvc.CreateCategory(input, adminID, ip)
 	if err != nil {
 		utils.SendBadRequest(c, err.Error())
 		return
@@ -117,7 +142,7 @@ func (h *AdminHandler) CreateCategory(c *gin.Context) {
 	})
 }
 
-// UpdateCategory edits a service category
+// UpdateCategory edits all fields of a service category
 func (h *AdminHandler) UpdateCategory(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -126,13 +151,14 @@ func (h *AdminHandler) UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	var cat models.Category
-	if err := c.ShouldBindJSON(&cat); err != nil {
+	var input services.CategoryInput
+	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.SendBadRequest(c, err.Error())
 		return
 	}
 
-	updated, err := h.adminSvc.UpdateCategory(uint(id), cat)
+	adminID, ip := currentAdminAuditContext(c)
+	updated, err := h.adminSvc.UpdateCategory(uint(id), input, adminID, ip)
 	if err != nil {
 		utils.SendBadRequest(c, err.Error())
 		return
@@ -153,7 +179,8 @@ func (h *AdminHandler) ToggleCategory(c *gin.Context) {
 		return
 	}
 
-	cat, err := h.adminSvc.ToggleCategory(uint(id))
+	adminID, ip := currentAdminAuditContext(c)
+	cat, err := h.adminSvc.ToggleCategory(uint(id), adminID, ip)
 	if err != nil {
 		utils.SendBadRequest(c, err.Error())
 		return
@@ -162,6 +189,27 @@ func (h *AdminHandler) ToggleCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"ok":       true,
 		"category": cat,
+	})
+}
+
+// DeleteCategory permanently removes a service category
+func (h *AdminHandler) DeleteCategory(c *gin.Context) {
+	idParam := c.Param("id")
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		utils.SendBadRequest(c, "Invalid category ID")
+		return
+	}
+
+	adminID, ip := currentAdminAuditContext(c)
+	if err := h.adminSvc.DeleteCategory(uint(id), adminID, ip); err != nil {
+		utils.SendBadRequest(c, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"ok":      true,
+		"message": "Service category removed successfully",
 	})
 }
 

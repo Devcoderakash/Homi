@@ -7,6 +7,12 @@ import { LanguagePicker, useAppCopy, useLanguage } from "@/components/language";
 import { useReportCopy } from "@/components/report-language";
 import type { Language } from "@/lib/locales";
 import { supabase, syncSessionCookie } from "@/lib/supabase";
+import {
+  FALLBACK_SERVICES,
+  useServiceCategories,
+  getCategoryIcon,
+  type ServiceCategoryItem,
+} from "@/lib/categories";
 export type CustomerQuotation = {
   id: number;
   requestId: number;
@@ -102,16 +108,8 @@ export type ServiceRequest = {
   hasLocation: boolean;
 };
 export type WorkerProfile = { id: number; name: string; city: string | null; specialty: string | null; bio: string | null; spokenLanguages: string; experienceYears: number; visitFee: number; available: boolean; rating: number | null; reviewCount: number; serviceRadiusKm: number; distanceKm: number | null; hasLocation: boolean; inRange?: boolean | null };
-export const services: { name: string; subtitle: string; icon: LucideIcon; color: string }[] = [
-  { name: "Plumbing", subtitle: "Taps, pipes & leaks", icon: Droplets, color: "#dfeefd" },
-  { name: "Electrical", subtitle: "Fans, lights & switches", icon: PlugZap, color: "#fff0d8" },
-  { name: "Carpentry", subtitle: "Doors & woodwork", icon: Hammer, color: "#f7e8d8" },
-  { name: "Cleaning", subtitle: "Kitchen & home", icon: Sparkles, color: "#e9e4fa" },
-  { name: "Painting", subtitle: "Walls & touch-ups", icon: PaintRoller, color: "#fce4e4" },
-  { name: "Appliance repair", subtitle: "AC, fridge & washing machine", icon: Fan, color: "#e2f2e8" },
-  { name: "Furniture repair", subtitle: "Sofas, chairs & beds", icon: Armchair, color: "#f4e9d9" },
-  { name: "General handyman", subtitle: "Not sure? Start here", icon: Wrench, color: "#e5edee" },
-];
+export { useServiceCategories, getCategoryIcon, type ServiceCategoryItem };
+export const services = FALLBACK_SERVICES;
 export function useCurrentUser() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -441,6 +439,22 @@ export function Footer() {
               <Link href="/become-a-worker">I Am a Worker</Link>
               <Link href="/login">Customer Sign In</Link>
               <Link href="/customer">My Requests</Link>
+            </div>
+            <div className="footer-col">
+              <strong>Privacy &amp; Legal</strong>
+              <Link href="/privacy">Privacy Policy (DPDP)</Link>
+              <Link href="/terms">Terms of Service</Link>
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.dispatchEvent(new CustomEvent("open-cookie-preferences"));
+                  }
+                }}
+                className="text-left text-xs sm:text-sm text-[#75877a] hover:text-[#285437] transition-colors py-1 cursor-pointer bg-transparent border-0 p-0"
+              >
+                Cookie Preferences
+              </button>
             </div>
           </div>
         </div>

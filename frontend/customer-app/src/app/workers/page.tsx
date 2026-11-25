@@ -13,11 +13,12 @@ import {
   RotateCcw,
   ChevronDown
 } from "lucide-react";
-import { Footer, Header, services, type WorkerProfile } from "@/components/site";
+import { Footer, Header, useServiceCategories, type WorkerProfile } from "@/components/site";
 import { useLanguage } from "@/components/language";
 
 export default function WorkersPage() {
   const { t, serviceLabel } = useLanguage();
+  const { categories: services } = useServiceCategories();
   const [city, setCity] = useState("");
   const [service, setService] = useState("");
   const [workers, setWorkers] = useState<WorkerProfile[]>([]);

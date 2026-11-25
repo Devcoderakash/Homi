@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -26,6 +27,16 @@ func (h *RequestHandler) CreateRequest(c *gin.Context) {
 	var input services.CreateRequestInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		utils.SendBadRequest(c, err.Error())
+		return
+	}
+
+	// Anti-bot honeypot check
+	if strings.TrimSpace(input.Honeypot) != "" {
+		c.JSON(http.StatusOK, gin.H{
+			"id":     999999,
+			"status": "submitted",
+			"isDemo": false,
+		})
 		return
 	}
 
@@ -61,8 +72,10 @@ func (h *RequestHandler) CreateRequest(c *gin.Context) {
 		}
 		customerID = guestUser.ID
 		sessionToken = token
-		c.SetCookie("homi_session", token, 30*24*3600, "/", "", false, true)
-		c.SetCookie("token", token, 30*24*3600, "/", "", false, true)
+		isSecure := c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https"
+		c.SetSameSite(http.SameSiteLaxMode)
+		c.SetCookie("homi_session", token, 30*24*3600, "/", "", isSecure, true)
+		c.SetCookie("token", token, 30*24*3600, "/", "", isSecure, true)
 	}
 
 	req, err := h.requestSvc.CreateRequest(customerID, input)
@@ -290,6 +303,52 @@ func (h *RequestHandler) UpdateStatus(c *gin.Context) {
 	})
 }
 
+func (h *RequestHandler) applyAdminStatus(c *gin.Context, targetStatus, notes string) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		utils.SendBadRequest(c, "Invalid request ID")
+		return
+	}
+	user := middleware.GetCurrentUser(c)
+	if user == nil || user.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required")
+		return
+	}
+	adminID := user.ID
+	updated, err := h.requestSvc.UpdateStatus(uint(id), targetStatus, &adminID, notes)
+	if err != nil {
+		utils.SendBadRequest(c, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"ok":      true,
+		"request": updated,
+	})
+}
+
+// PublishRequest approves and shares a service request with local workers
+func (h *RequestHandler) PublishRequest(c *gin.Context) {
+	var body struct {
+		Notes string `json:"notes"`
+	}
+	_ = c.ShouldBindJSON(&body)
+	h.applyAdminStatus(c, models.StatusSharedWithWorkers, body.Notes)
+}
+
+// RejectRequest declines a service request with an admin reason
+func (h *RequestHandler) RejectRequest(c *gin.Context) {
+	var body struct {
+		Reason string `json:"reason"`
+		Notes  string `json:"notes"`
+	}
+	_ = c.ShouldBindJSON(&body)
+	reason := strings.TrimSpace(body.Reason)
+	if reason == "" {
+		reason = strings.TrimSpace(body.Notes)
+	}
+	h.applyAdminStatus(c, models.StatusRejected, reason)
+}
+
 func (h *RequestHandler) UploadPhotos(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -305,7 +364,11 @@ func (h *RequestHandler) UploadPhotos(c *gin.Context) {
 	}
 
 	user := middleware.GetCurrentUser(c)
-	if user != nil && user.Role != "admin" && req.CustomerID != user.ID {
+	if user == nil {
+		utils.SendUnauthorized(c, "Authentication required to upload photos")
+		return
+	}
+	if user.Role != "admin" && req.CustomerID != user.ID {
 		utils.SendForbidden(c, "Access denied: cannot upload photos to another customer's request")
 		return
 	}
@@ -346,17 +409,31 @@ func (h *RequestHandler) PatchRequest(c *gin.Context) {
 		return
 	}
 
+	req, err := h.requestSvc.GetRequestByID(uint(id))
+	if err != nil {
+		utils.SendNotFound(c, "Service request not found")
+		return
+	}
+
+	user := middleware.GetCurrentUser(c)
+	if user == nil {
+		utils.SendUnauthorized(c, "Authentication required to modify request")
+		return
+	}
+
+	// Non-admin can only act on their own requests
+	if user.Role != "admin" && req.CustomerID != user.ID {
+		utils.SendForbidden(c, "Access denied: cannot modify another customer's request")
+		return
+	}
+
 	var body map[string]interface{}
 	_ = c.ShouldBindJSON(&body)
 
 	action, _ := body["action"].(string)
 	if action == "cancel" {
-		user := middleware.GetCurrentUser(c)
-		var uid *uint
-		if user != nil {
-			uid = &user.ID
-		}
-		updated, err := h.requestSvc.UpdateStatus(uint(id), models.StatusCancelled, uid, "Cancelled by user")
+		uid := user.ID
+		updated, err := h.requestSvc.UpdateStatus(uint(id), models.StatusCancelled, &uid, "Cancelled by user")
 		if err != nil {
 			utils.SendBadRequest(c, err.Error())
 			return

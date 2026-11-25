@@ -38,6 +38,7 @@ type CreateRequestInput struct {
 	PreferredTime     string   `json:"preferredTime"`
 	PreferredLanguage string   `json:"preferredLanguage"`
 	ImageURLs         []string `json:"imageUrls"`
+	Honeypot          string   `json:"website"` // Anti-bot honeypot
 }
 
 type RequestFilter struct {

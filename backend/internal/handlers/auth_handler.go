@@ -20,6 +20,24 @@ func NewAuthHandler(authSvc *services.AuthService) *AuthHandler {
 	return &AuthHandler{authSvc: authSvc}
 }
 
+func setSessionCookies(c *gin.Context, token string, isAdmin bool) {
+	isSecure := c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https"
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("homi_session", token, 30*24*3600, "/", "", isSecure, true)
+	c.SetCookie("token", token, 30*24*3600, "/", "", isSecure, true)
+	if isAdmin {
+		c.SetCookie("homi_admin_session", token, 30*24*3600, "/", "", isSecure, true)
+	}
+}
+
+func clearSessionCookies(c *gin.Context) {
+	isSecure := c.Request.TLS != nil || c.GetHeader("X-Forwarded-Proto") == "https"
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("homi_session", "", -1, "/", "", isSecure, true)
+	c.SetCookie("homi_admin_session", "", -1, "/", "", isSecure, true)
+	c.SetCookie("token", "", -1, "/", "", isSecure, true)
+}
+
 // AuthDispatcher routes legacy /api/auth POST requests according to action ("register" vs "login")
 func (h *AuthHandler) AuthDispatcher(c *gin.Context) {
 	// Read raw body
@@ -45,8 +63,7 @@ func (h *AuthHandler) AuthDispatcher(c *gin.Context) {
 			utils.SendBadRequest(c, err.Error())
 			return
 		}
-		c.SetCookie("homi_session", token, 30*24*3600, "/", "", false, true)
-		c.SetCookie("token", token, 30*24*3600, "/", "", false, true)
+		setSessionCookies(c, token, user.Role == "admin")
 		c.JSON(http.StatusCreated, gin.H{"ok": true, "user": user, "token": token})
 		return
 	}
@@ -62,11 +79,7 @@ func (h *AuthHandler) AuthDispatcher(c *gin.Context) {
 		utils.SendUnauthorized(c, err.Error())
 		return
 	}
-	c.SetCookie("homi_session", token, 30*24*3600, "/", "", false, true)
-	c.SetCookie("token", token, 30*24*3600, "/", "", false, true)
-	if user.Role == "admin" {
-		c.SetCookie("homi_admin_session", token, 30*24*3600, "/", "", false, true)
-	}
+	setSessionCookies(c, token, user.Role == "admin")
 	c.JSON(http.StatusOK, gin.H{"ok": true, "user": user, "token": token})
 }
 
@@ -84,8 +97,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// Set session cookies
-	c.SetCookie("homi_session", token, 30*24*3600, "/", "", false, true)
-	c.SetCookie("token", token, 30*24*3600, "/", "", false, true)
+	setSessionCookies(c, token, user.Role == "admin")
 
 	c.JSON(http.StatusCreated, gin.H{
 		"ok":    true,
@@ -108,11 +120,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	// Set session cookies for both customer and admin panels
-	c.SetCookie("homi_session", token, 30*24*3600, "/", "", false, true)
-	c.SetCookie("token", token, 30*24*3600, "/", "", false, true)
-	if user.Role == "admin" {
-		c.SetCookie("homi_admin_session", token, 30*24*3600, "/", "", false, true)
-	}
+	setSessionCookies(c, token, user.Role == "admin")
 
 	c.JSON(http.StatusOK, gin.H{
 		"ok":    true,
@@ -122,9 +130,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 }
 
 func (h *AuthHandler) Logout(c *gin.Context) {
-	c.SetCookie("homi_session", "", -1, "/", "", false, true)
-	c.SetCookie("homi_admin_session", "", -1, "/", "", false, true)
-	c.SetCookie("token", "", -1, "/", "", false, true)
+	clearSessionCookies(c)
 
 	c.JSON(http.StatusOK, gin.H{
 		"ok":      true,

@@ -31,7 +31,8 @@ import {
   ChevronRight,
   ClipboardCheck
 } from "lucide-react";
-import { Footer, Header, services as defaultServices } from "@/components/site";
+import { Footer, Header, useServiceCategories } from "@/components/site";
+import { HeroPromoBanner } from "@/components/HeroPromoBanner";
 import { useLanguage } from "@/components/language";
 
 const iconMap: Record<string, any> = {
@@ -95,7 +96,7 @@ type CategoryItem = {
 
 export default function HomePage() {
   const { t, serviceLabel } = useLanguage();
-  const [categories, setCategories] = useState<CategoryItem[]>(defaultServices);
+  const { categories } = useServiceCategories();
   const [service, setService] = useState("");
   const [city, setCity] = useState("Bhopal");
   const [servicesSearch, setServicesSearch] = useState("");
@@ -132,22 +133,7 @@ export default function HomePage() {
     return item.name.toLowerCase().includes(q) || item.subtitle.toLowerCase().includes(q);
   });
 
-  useEffect(() => {
-    let mounted = true;
-    fetch("/api/categories")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (mounted && data && Array.isArray(data.services) && data.services.length > 0) {
-          setCategories(data.services);
-        }
-      })
-      .catch(() => {
-        // Fallback to defaultServices
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const popularMobileItems = categories.slice(0, 5);
 
   const bookingUrl = `/book?${new URLSearchParams({
     ...(service ? { service } : {}),
@@ -286,19 +272,19 @@ export default function HomePage() {
             </div>
 
             <div className="mobile-popular-grid">
-              {mobilePopularServices.map((item) => {
+              {popularMobileItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.name}
-                    href={`/book?service=${encodeURIComponent(item.serviceParam)}`}
+                    href={`/book?service=${encodeURIComponent(item.name)}`}
                     className="mobile-popular-item"
                   >
                     <div className="mobile-popular-icon-box">
                       <Icon size={24} strokeWidth={1.8} />
                     </div>
                     <span className="mobile-popular-label">
-                      {item.label}
+                      {item.name}
                     </span>
                   </Link>
                 );
@@ -514,6 +500,9 @@ export default function HomePage() {
             </span>
           </div>
         </section>
+
+        {/* 1B. BRAND PROMOTIONAL HERO BANNER (Responsive Desktop & Mobile Showcase) */}
+        <HeroPromoBanner />
 
         {/* 2. SERVICES SECTION */}
         <section className="services-section-wrapper" id="services">

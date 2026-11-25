@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { useLanguage } from "@/components/language";
 import { useServiceCopy } from "@/components/service-language";
-import { services, type ServiceRequest } from "@/components/site";
+import { useServiceCategories, type ServiceRequest } from "@/components/site";
 export type BoardCounts = { total: number; available: number; active: number; completed: number; cancelled: number; pendingQuotes?: number };
 export function useRequestBoard(enabled: boolean, scope: string) {
   const { t } = useLanguage();
@@ -75,5 +75,6 @@ export function useRequestBoard(enabled: boolean, scope: string) {
 }
 export function RequestBoardFilters({ board, worker = false }: { board: ReturnType<typeof useRequestBoard>; worker?: boolean }) {
   const { t, serviceLabel } = useLanguage(); const { s } = useServiceCopy();
+  const { categories: services } = useServiceCategories();
   return <div className="request-board-filters"><label className="board-search"><Search size={18}/><input aria-label={s("searchRequests")} maxLength={120} value={board.search} placeholder={s("searchRequests")} onChange={event => board.setSearch(event.target.value)}/>{board.search && <button type="button" aria-label={s("clearSearch")} onClick={() => board.setSearch("")}><X size={16}/></button>}</label><label className="board-category"><SlidersHorizontal size={16}/><select aria-label={t("allServices")} value={board.category} onChange={event => board.setCategory(event.target.value)}><option value="">{t("allServices")}</option>{services.map(service => <option key={service.name} value={service.name}>{serviceLabel(service.name)}</option>)}</select></label><select className="board-sort" aria-label={s("sort")} value={board.sort} onChange={event => board.setSort(event.target.value)}><option value="newest">{s("newest")}</option>{worker && <option value="nearest">{s("nearest")}</option>}<option value="visit">{s("visitSoon")}</option></select></div>;
 }

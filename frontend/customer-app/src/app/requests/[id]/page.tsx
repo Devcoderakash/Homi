@@ -1109,7 +1109,7 @@ export default function RequestDetailsPage() {
             // Case 3: Payment Required (PAYMENT_PENDING or PAYMENT_REJECTED)
             const upiId = paymentSettings?.upiId || "homi@upi";
             const payeeName = paymentSettings?.payeeName || "Homi Everyday Care";
-            const qrUrl = paymentSettings?.qrCodeUrl || `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${quoteTotal}&cu=INR&tn=${encodeURIComponent(`Homi #HOMI-${job.id}`)}`)}`;
+            const qrUrl = paymentSettings?.qrCodeUrl || "/images/payment-qr.jpg";
 
             return (
               <section
@@ -1209,7 +1209,7 @@ export default function RequestDetailsPage() {
                       <img
                         src={qrUrl}
                         alt="Homi Payment UPI QR Code"
-                        style={{ width: "170px", height: "170px", display: "block" }}
+                        style={{ width: "180px", height: "180px", objectFit: "contain", display: "block" }}
                       />
                     </div>
 

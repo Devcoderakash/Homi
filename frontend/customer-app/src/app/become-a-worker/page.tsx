@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { 
   Wrench, 
@@ -24,7 +24,7 @@ import {
   Calendar,
   AlertCircle
 } from "lucide-react";
-import { Header, Footer, services } from "@/components/site";
+import { Header, Footer, useServiceCategories } from "@/components/site";
 
 export default function BecomeAWorkerPage() {
   const [loading, setLoading] = useState(false);
@@ -41,10 +41,17 @@ export default function BecomeAWorkerPage() {
   } | null>(null);
 
   // Form states
+  const { categories: services } = useServiceCategories();
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [category, setCategory] = useState("Plumbing");
+
+  useEffect(() => {
+    if (services.length > 0 && !services.some((s) => s.name === category)) {
+      setCategory(services[0].name);
+    }
+  }, [services, category]);
   const [skills, setSkills] = useState("");
   const [experienceYears, setExperienceYears] = useState("3");
   const [city, setCity] = useState("Bhopal");
@@ -64,6 +71,8 @@ export default function BecomeAWorkerPage() {
   const [documentFileSize, setDocumentFileSize] = useState("");
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [previewModalImg, setPreviewModalImg] = useState<string | null>(null);
+  const [privacyConsent, setPrivacyConsent] = useState(true);
+  const [honeypot, setHoneypot] = useState("");
 
   const docInputRef = useRef<HTMLInputElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -124,6 +133,19 @@ export default function BecomeAWorkerPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (honeypot) {
+      setSubmittedData({
+        applicationId: 999999,
+        name: fullName || "Applicant",
+        specialty: category,
+        city: city,
+        status: "under_review",
+        timing: `${availableFrom} - ${availableTo}`,
+        documentType,
+        hasDoc: false,
+      });
+      return;
+    }
     setLoading(true);
 
     try {
@@ -145,6 +167,7 @@ export default function BecomeAWorkerPage() {
         documentUrl: documentImage || "",
         documentsUrl: documentImage || "",
         profilePhotoUrl: profilePhoto || "",
+        website: honeypot,
       };
 
       const res = await fetch("/api/workers/apply", {
@@ -257,6 +280,19 @@ export default function BecomeAWorkerPage() {
                 onSubmit={handleSubmit}
                 className="bg-white border border-[#e5ebe4] rounded-2xl p-5 sm:p-8 md:p-10 shadow-sm"
               >
+                {/* Anti-bot honeypot */}
+                <div style={{ position: "absolute", left: "-9999px", opacity: 0, pointerEvents: "none" }} aria-hidden="true">
+                  <label htmlFor="worker_website">Website</label>
+                  <input
+                    type="text"
+                    id="worker_website"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
                 {error && (
                   <div className="bg-[#fff0ed] text-[#ad4435] border border-[#f5c9c2] rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm mb-6">
                     {error}
@@ -713,6 +749,39 @@ export default function BecomeAWorkerPage() {
                       )}
                     </div>
                   </div>
+                </div>
+
+                {/* DPDP Privacy Notice & Verification Consent */}
+                <div className="mb-6 p-4 rounded-xl bg-[#f2f8ed] border border-[#dcebd8] text-xs text-[#285437] space-y-2">
+                  <div className="flex items-center gap-2 font-bold">
+                    <ShieldCheck size={16} />
+                    <span>DPDP Act 2023 — Privacy Notice for Service Professionals</span>
+                  </div>
+                  <p className="leading-relaxed text-[#3b5944]">
+                    Your personal information and government identity document are collected solely for identity verification, safety background screening, and fraud prevention as required by Indian regulations.
+                  </p>
+                  <p className="leading-relaxed text-[#3b5944]">
+                    Your identity documents are stored in private, encrypted cloud storage and are <strong>never</strong> displayed publicly or shared with customers.
+                  </p>
+                  <label className="flex items-start gap-2 pt-1 font-semibold text-[#184e3f] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={privacyConsent}
+                      onChange={(e) => setPrivacyConsent(e.target.checked)}
+                      className="mt-0.5 rounded text-[#285437] focus:ring-[#285437]"
+                    />
+                    <span>
+                      I consent to the collection and verification of my details and documents under the{" "}
+                      <Link href="/privacy" target="_blank" className="underline font-bold hover:text-[#123b30]">
+                        Homi Privacy Policy
+                      </Link>{" "}
+                      and{" "}
+                      <Link href="/terms" target="_blank" className="underline font-bold hover:text-[#123b30]">
+                        Terms of Service
+                      </Link>.
+                    </span>
+                  </label>
                 </div>
 
                 {/* Submission CTA */}

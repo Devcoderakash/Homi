@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"homi-backend/internal/middleware"
+	"homi-backend/internal/models"
 	"homi-backend/internal/services"
 	"homi-backend/internal/utils"
 )
@@ -19,7 +20,7 @@ func NewWorkerHandler(workerSvc *services.WorkerService) *WorkerHandler {
 	return &WorkerHandler{workerSvc: workerSvc}
 }
 
-// ListWorkers returns verified technicians
+// ListWorkers returns verified technicians (sanitized for public, full details for admins)
 func (h *WorkerHandler) ListWorkers(c *gin.Context) {
 	specialty := c.Query("specialty")
 	if specialty == "" {
@@ -35,6 +36,22 @@ func (h *WorkerHandler) ListWorkers(c *gin.Context) {
 		return
 	}
 
+	user := middleware.GetCurrentUser(c)
+	isAdmin := user != nil && user.Role == "admin"
+
+	if !isAdmin {
+		sanitized := make([]models.Worker, len(workers))
+		for i := range workers {
+			sanitized[i] = utils.SanitizeWorkerForPublic(&workers[i])
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"ok":      true,
+			"workers": sanitized,
+			"count":   len(sanitized),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"ok":      true,
 		"workers": workers,
@@ -42,7 +59,7 @@ func (h *WorkerHandler) ListWorkers(c *gin.Context) {
 	})
 }
 
-// GetWorkerByID returns worker profile
+// GetWorkerByID returns worker profile (sanitized for public, full details for admins)
 func (h *WorkerHandler) GetWorkerByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -57,9 +74,23 @@ func (h *WorkerHandler) GetWorkerByID(c *gin.Context) {
 		return
 	}
 
+	user := middleware.GetCurrentUser(c)
+	isAdmin := user != nil && user.Role == "admin"
+
+	if !isAdmin {
+		safeWorker := utils.SanitizeWorkerForPublic(worker)
+		c.JSON(http.StatusOK, gin.H{
+			"ok":      true,
+			"worker":  safeWorker,
+			"reviews": []gin.H{},
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"ok":     true,
-		"worker": worker,
+		"ok":      true,
+		"worker":  worker,
+		"reviews": []gin.H{},
 	})
 }
 

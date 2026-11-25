@@ -13,34 +13,48 @@ func CORSMiddleware(cfg *config.Config) gin.HandlerFunc {
 	cleanCustomerURL := strings.TrimRight(cfg.CustomerAppURL, "/")
 	cleanAdminURL := strings.TrimRight(cfg.AdminAppURL, "/")
 
+	// Whitelist of approved production origins
+	trustedProductionOrigins := map[string]bool{
+		"https://homi-kappa.vercel.app": true,
+		"https://homi-v3nj.onrender.com": true,
+	}
+
 	return cors.New(cors.Config{
 		AllowOriginFunc: func(origin string) bool {
 			if origin == "" {
 				return true
 			}
-			// Exact matches (without trailing slash)
-			if cleanCustomerURL != "" && (origin == cleanCustomerURL || strings.TrimRight(origin, "/") == cleanCustomerURL) {
+			cleanOrigin := strings.TrimRight(origin, "/")
+
+			// 1. Configured Frontend URLs from environment variables
+			if cleanCustomerURL != "" && cleanOrigin == cleanCustomerURL {
 				return true
 			}
-			if cleanAdminURL != "" && (origin == cleanAdminURL || strings.TrimRight(origin, "/") == cleanAdminURL) {
+			if cleanAdminURL != "" && cleanOrigin == cleanAdminURL {
 				return true
 			}
-			// Localhost and loopback development
-			if strings.HasPrefix(origin, "http://localhost:") ||
-				strings.HasPrefix(origin, "http://127.0.0.1:") ||
-				strings.HasPrefix(origin, "https://localhost:") ||
-				origin == "http://localhost" ||
-				origin == "http://127.0.0.1" {
+
+			// 2. Explicitly trusted production deployment domains
+			if trustedProductionOrigins[cleanOrigin] {
 				return true
 			}
-			// Allow all Vercel deployments (production, staging, preview branches)
-			if strings.HasSuffix(origin, ".vercel.app") {
+
+			// 3. Official Homi Vercel project preview deployments only (strictly match 'homi-' prefix on vercel.app)
+			if strings.HasPrefix(cleanOrigin, "https://homi-") && strings.HasSuffix(cleanOrigin, ".vercel.app") {
 				return true
 			}
-			// Allow Render deployments
-			if strings.HasSuffix(origin, ".onrender.com") {
-				return true
+
+			// 4. Localhost and loopback development (only in development environment)
+			if cfg.AppEnv != "production" {
+				if strings.HasPrefix(origin, "http://localhost:") ||
+					strings.HasPrefix(origin, "http://127.0.0.1:") ||
+					strings.HasPrefix(origin, "https://localhost:") ||
+					origin == "http://localhost" ||
+					origin == "http://127.0.0.1" {
+					return true
+				}
 			}
+
 			return false
 		},
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"},

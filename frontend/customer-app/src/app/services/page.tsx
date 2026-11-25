@@ -18,9 +18,11 @@ import {
   Wrench, 
   Zap 
 } from "lucide-react";
-import { Header, Footer, services } from "@/components/site";
+import { Header, Footer } from "@/components/site";
+import { useServiceCategories } from "@/lib/categories";
 
 export default function ServicesPage() {
+  const { categories: services } = useServiceCategories();
   const [servicesSearch, setServicesSearch] = useState("");
 
   const filteredServices = services.filter((item) => {

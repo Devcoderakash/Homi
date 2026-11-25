@@ -133,12 +133,33 @@ export const adminApi = {
 
   // Categories
   getCategories: () => adminRequest("/admin/categories"),
-  createCategory: (data: { name: string; slug: string; description?: string; icon?: string }) =>
-    adminRequest("/admin/categories", { method: "POST", body: JSON.stringify(data) }),
-  updateCategory: (id: number, data: { name?: string; slug?: string; description?: string; icon?: string; active?: boolean }) =>
-    adminRequest(`/admin/categories/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  createCategory: (data: {
+    name: string;
+    slug: string;
+    description?: string;
+    icon?: string;
+    color?: string;
+    startingPrice?: number;
+    active?: boolean;
+    sortOrder?: number;
+  }) => adminRequest("/admin/categories", { method: "POST", body: JSON.stringify(data) }),
+  updateCategory: (
+    id: number,
+    data: {
+      name?: string;
+      slug?: string;
+      description?: string;
+      icon?: string;
+      color?: string;
+      startingPrice?: number;
+      active?: boolean;
+      sortOrder?: number;
+    }
+  ) => adminRequest(`/admin/categories/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   toggleCategory: (id: number) =>
     adminRequest(`/admin/categories/${id}/toggle`, { method: "PATCH" }),
+  deleteCategory: (id: number) =>
+    adminRequest(`/admin/categories/${id}`, { method: "DELETE" }),
 
   // Users Directory
   getCustomers: (q?: string) => adminRequest(`/admin/customers${q ? `?q=${encodeURIComponent(q)}` : ""}`),
@@ -240,4 +261,27 @@ export const adminApi = {
     adminRequest("/auth/login", { method: "POST", body: JSON.stringify(credentials) }),
   logout: () => adminRequest("/auth/logout", { method: "POST" }),
   getMe: () => adminRequest("/me"),
+
+  // DPDP Privacy & Grievance Redressal (DPDP Act 2023)
+  getGrievanceOfficer: () => adminRequest("/privacy/grievance-officer"),
+  updateGrievanceOfficer: (data: {
+    name: string;
+    designation: string;
+    email: string;
+    phone: string;
+    address: string;
+  }) =>
+    adminRequest("/admin/privacy/grievance-officer", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+  getDataSubjectRequests: (params?: { status?: string }) => {
+    const qStr = params?.status ? `?status=${encodeURIComponent(params.status)}` : "";
+    return adminRequest(`/admin/privacy/requests${qStr}`);
+  },
+  resolveDataSubjectRequest: (id: number, resolutionNotes: string) =>
+    adminRequest(`/admin/privacy/requests/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ resolutionNotes }),
+    }),
 };

@@ -445,15 +445,17 @@ func (RequestStatusHistory) TableName() string {
 
 // Category represents a household service category
 type Category struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
-	Name        string    `gorm:"size:80;not null" json:"name"`
-	Slug        string    `gorm:"size:80;not null;uniqueIndex" json:"slug"`
-	Description string    `gorm:"type:text" json:"description,omitempty"`
-	Icon        string    `gorm:"size:50" json:"icon,omitempty"`
-	Active      bool      `gorm:"default:true;index" json:"active"`
-	SortOrder   int       `gorm:"default:0;index" json:"sortOrder"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	ID            uint      `gorm:"primaryKey" json:"id"`
+	Name          string    `gorm:"size:80;not null" json:"name"`
+	Slug          string    `gorm:"size:80;not null;uniqueIndex" json:"slug"`
+	Description   string    `gorm:"type:text" json:"description,omitempty"`
+	Icon          string    `gorm:"size:50" json:"icon,omitempty"`
+	Color         string    `gorm:"size:30;default:'#e5edee'" json:"color,omitempty"`
+	StartingPrice int       `gorm:"default:199" json:"startingPrice"`
+	Active        bool      `gorm:"default:true;index" json:"active"`
+	SortOrder     int       `gorm:"default:0;index" json:"sortOrder"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
 }
 
 func (Category) TableName() string {
@@ -473,4 +475,59 @@ type Notification struct {
 
 func (Notification) TableName() string {
 	return "notifications"
+}
+
+// PrivacyConsent logs granular customer consent under India's DPDP Act 2023
+type PrivacyConsent struct {
+	ID             uint       `gorm:"primaryKey" json:"id"`
+	UserID         *uint      `gorm:"index" json:"userId,omitempty"`
+	SessionID      string     `gorm:"size:120;index" json:"sessionId,omitempty"`
+	ConsentType    string     `gorm:"size:60;not null;index" json:"consentType"` // service_booking, worker_application, cookies_analytics, cookies_marketing
+	Purpose        string     `gorm:"type:text;not null" json:"purpose"`
+	ConsentVersion string     `gorm:"size:20;not null;default:'1.0'" json:"consentVersion"`
+	Granted        bool       `gorm:"not null;default:true" json:"granted"`
+	IPAddress      string     `gorm:"size:45" json:"ipAddress,omitempty"`
+	UserAgent      string     `gorm:"type:text" json:"userAgent,omitempty"`
+	GrantedAt      time.Time  `json:"grantedAt"`
+	RevokedAt      *time.Time `json:"revokedAt,omitempty"`
+}
+
+func (PrivacyConsent) TableName() string {
+	return "privacy_consents"
+}
+
+// DataSubjectRequest tracks Right to Access, Correction, Erasure and Grievances under DPDP Act 2023
+type DataSubjectRequest struct {
+	ID              uint       `gorm:"primaryKey" json:"id"`
+	UserID          *uint      `gorm:"index" json:"userId,omitempty"`
+	RequestType     string     `gorm:"size:40;not null;index" json:"requestType"` // ACCESS, CORRECTION, ERASURE, GRIEVANCE
+	ContactEmail    string     `gorm:"size:255;not null" json:"contactEmail"`
+	ContactPhone    string     `gorm:"size:40" json:"contactPhone,omitempty"`
+	Details         string     `gorm:"type:text;not null" json:"details"`
+	Status          string     `gorm:"size:30;not null;default:'PENDING';index" json:"status"` // PENDING, IN_REVIEW, RESOLVED, REJECTED
+	ResolutionNotes string     `gorm:"type:text" json:"resolutionNotes,omitempty"`
+	ResolvedBy      *uint      `json:"resolvedBy,omitempty"`
+	ResolvedAt      *time.Time `json:"resolvedAt,omitempty"`
+	CreatedAt       time.Time  `json:"createdAt"`
+	UpdatedAt       time.Time  `json:"updatedAt"`
+}
+
+func (DataSubjectRequest) TableName() string {
+	return "data_subject_requests"
+}
+
+// GrievanceOfficer stores configurable Data Protection & Grievance Officer details
+type GrievanceOfficer struct {
+	ID           uint      `gorm:"primaryKey" json:"id"`
+	Name         string    `gorm:"size:120;not null" json:"name"`
+	Designation  string    `gorm:"size:120;not null" json:"designation"`
+	Email        string    `gorm:"size:255;not null" json:"email"`
+	Phone        string    `gorm:"size:40;not null" json:"phone"`
+	Address      string    `gorm:"type:text;not null" json:"address"`
+	Instructions string    `gorm:"type:text;not null" json:"instructions"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+}
+
+func (GrievanceOfficer) TableName() string {
+	return "grievance_officers"
 }

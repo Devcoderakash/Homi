@@ -91,6 +91,24 @@ func (h *PaymentHandler) UploadQRCodeImage(c *gin.Context) {
 
 // UploadScreenshot allows customer to upload transaction screenshot
 func (h *PaymentHandler) UploadScreenshot(c *gin.Context) {
+	user := middleware.GetCurrentUser(c)
+	if user == nil {
+		utils.SendUnauthorized(c, "Authentication required to upload payment screenshot")
+		return
+	}
+
+	idParam := c.Param("id")
+	if idParam != "" {
+		reqID, err := strconv.ParseUint(idParam, 10, 32)
+		if err == nil {
+			payment, err := h.paymentSvc.GetPaymentByRequestID(uint(reqID))
+			if err == nil && payment != nil && user.Role != "admin" && payment.CustomerID != user.ID {
+				utils.SendForbidden(c, "Access denied: cannot upload screenshot to another customer's payment")
+				return
+			}
+		}
+	}
+
 	file, err := c.FormFile("screenshot")
 	if err != nil {
 		file, err = c.FormFile("file")
@@ -102,7 +120,7 @@ func (h *PaymentHandler) UploadScreenshot(c *gin.Context) {
 
 	url, err := h.paymentSvc.UploadPaymentScreenshot(file)
 	if err != nil {
-		utils.SendInternalError(c, err.Error())
+		utils.SendBadRequest(c, err.Error())
 		return
 	}
 
@@ -114,6 +132,12 @@ func (h *PaymentHandler) UploadScreenshot(c *gin.Context) {
 
 // GetPayment retrieves the payment status and record for a request
 func (h *PaymentHandler) GetPayment(c *gin.Context) {
+	user := middleware.GetCurrentUser(c)
+	if user == nil {
+		utils.SendUnauthorized(c, "Authentication required to view payment details")
+		return
+	}
+
 	idParam := c.Param("id")
 	reqID, err := strconv.ParseUint(idParam, 10, 32)
 	if err != nil {
@@ -131,8 +155,7 @@ func (h *PaymentHandler) GetPayment(c *gin.Context) {
 		return
 	}
 
-	user := middleware.GetCurrentUser(c)
-	if user != nil && user.Role != "admin" && payment.CustomerID != user.ID {
+	if user.Role != "admin" && payment.CustomerID != user.ID {
 		utils.SendForbidden(c, "Access denied: this payment belongs to another customer account")
 		return
 	}

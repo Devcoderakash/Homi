@@ -25,6 +25,7 @@ func NewPaymentService(db *gorm.DB, storage *StorageService) *PaymentService {
 type PaymentSettingsInput struct {
 	UpiID             string `json:"upiId"`
 	PayeeName         string `json:"payeeName"`
+	QRCodeURL         string `json:"qrCodeUrl"`
 	BankAccountHolder string `json:"bankAccountHolder"`
 	BankName          string `json:"bankName"`
 	AccountNumber     string `json:"accountNumber"`
@@ -51,6 +52,8 @@ func (s *PaymentService) GetPaymentSettings() (*models.PaymentSettings, error) {
 				ID:                1,
 				UpiID:             "homi@upi",
 				PayeeName:         "Homi Everyday Care",
+				QRCodeURL:         "/images/payment-qr.jpg",
+				QRStoragePath:     "images/payment-qr.jpg",
 				BankAccountHolder: "Homi Platform Operations",
 				BankName:          "State Bank of India",
 				AccountNumber:     "409281726354",
@@ -81,6 +84,9 @@ func (s *PaymentService) UpdatePaymentSettings(input PaymentSettingsInput) (*mod
 	}
 	if input.PayeeName != "" {
 		settings.PayeeName = strings.TrimSpace(input.PayeeName)
+	}
+	if input.QRCodeURL != "" {
+		settings.QRCodeURL = strings.TrimSpace(input.QRCodeURL)
 	}
 	if input.BankAccountHolder != "" {
 		settings.BankAccountHolder = strings.TrimSpace(input.BankAccountHolder)

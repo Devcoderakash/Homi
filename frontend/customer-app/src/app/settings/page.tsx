@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Check, LockKeyhole, Save, UserRound } from "lucide-react";
 import { DashboardGuard, DashboardShell } from "@/components/dashboard";
-import { services, useCurrentUser, type User } from "@/components/site";
+import { useServiceCategories, useCurrentUser, type User } from "@/components/site";
 import { useAppCopy, useLanguage } from "@/components/language";
 import { languages } from "@/lib/locales";
 import { indianMobile, isDemoEmail } from "@/lib/india";
@@ -13,6 +13,7 @@ import { locationText } from "@/lib/location-copy";
 
 function SettingsForm({ user }: { user: User }) {
   const { t, serviceLabel, language } = useLanguage(); const { a } = useAppCopy();
+  const { categories: services } = useServiceCategories();
   const l = (key: Parameters<typeof locationText>[1]) => locationText(language, key);
   const [location, setLocation] = useState<LocationValue | null>(savedLocation(user));
   const [radius, setRadius] = useState(user.serviceRadiusKm || 10);

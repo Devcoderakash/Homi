@@ -44,6 +44,7 @@ export default function SettingsPage() {
   const [paymentSettings, setPaymentSettings] = useState({
     upiId: "homi@upi",
     payeeName: "Homi Everyday Care",
+    qrCodeUrl: "/images/payment-qr.jpg",
     bankAccountHolder: "Homi Platform Operations",
     bankName: "State Bank of India",
     accountNumber: "409281726354",
@@ -56,6 +57,19 @@ export default function SettingsPage() {
   const [savingPayment, setSavingPayment] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState("");
   const [paymentError, setPaymentError] = useState("");
+
+  // DPDP Grievance Officer Settings (DPDP Act 2023)
+  const [grievanceOfficer, setGrievanceOfficer] = useState({
+    name: "Grievance Officer (Designated)",
+    designation: "Data Protection & Grievance Redressal Officer",
+    email: "grievance@homi.local",
+    phone: "+91 755 000 0000",
+    address: "Homi Platform Operations, Arera Colony, Bhopal, MP - 462016, India",
+  });
+  const [loadingGrievance, setLoadingGrievance] = useState(true);
+  const [savingGrievance, setSavingGrievance] = useState(false);
+  const [grievanceSuccess, setGrievanceSuccess] = useState("");
+  const [grievanceError, setGrievanceError] = useState("");
 
   useEffect(() => {
     async function loadSettings() {
@@ -78,6 +92,7 @@ export default function SettingsPage() {
           setPaymentSettings({
             upiId: payRes.settings.upiId || "homi@upi",
             payeeName: payRes.settings.payeeName || "Homi Everyday Care",
+            qrCodeUrl: payRes.settings.qrCodeUrl || "/images/payment-qr.jpg",
             bankAccountHolder: payRes.settings.bankAccountHolder || "Homi Platform Operations",
             bankName: payRes.settings.bankName || "State Bank of India",
             accountNumber: payRes.settings.accountNumber || "409281726354",
@@ -92,9 +107,42 @@ export default function SettingsPage() {
       } finally {
         setLoadingPayment(false);
       }
+
+      try {
+        setLoadingGrievance(true);
+        const gRes = await adminApi.getGrievanceOfficer();
+        if (gRes?.officer) {
+          setGrievanceOfficer({
+            name: gRes.officer.name || "Grievance Officer (Designated)",
+            designation: gRes.officer.designation || "Data Protection & Grievance Redressal Officer",
+            email: gRes.officer.email || "grievance@homi.local",
+            phone: gRes.officer.phone || "+91 755 000 0000",
+            address: gRes.officer.address || "Homi Platform Operations, Arera Colony, Bhopal, MP - 462016, India",
+          });
+        }
+      } catch (err: any) {
+        console.warn("Could not load Grievance Officer:", err);
+      } finally {
+        setLoadingGrievance(false);
+      }
     }
     loadSettings();
   }, []);
+
+  const handleSaveGrievanceOfficer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setGrievanceError("");
+    setGrievanceSuccess("");
+    setSavingGrievance(true);
+    try {
+      await adminApi.updateGrievanceOfficer(grievanceOfficer);
+      setGrievanceSuccess("Grievance Officer details updated successfully! These details are now live on the Customer Privacy & Grievance page.");
+    } catch (err: any) {
+      setGrievanceError(err.message || "Failed to update Grievance Officer");
+    } finally {
+      setSavingGrievance(false);
+    }
+  };
 
   const handleSavePaymentSettings = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -449,6 +497,29 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
+
+              {/* Active Payment QR Preview */}
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-4 border-t border-[#e5ebe4]">
+                <div className="w-24 h-24 rounded-xl bg-white border border-[#dce9d7] p-1.5 shrink-0 flex items-center justify-center overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={paymentSettings.qrCodeUrl || "/images/payment-qr.jpg"}
+                    alt="Active UPI Payment QR"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-extrabold text-[#123b30]">
+                    Active Customer Payment QR Code
+                  </p>
+                  <p className="text-[11px] text-[#526e57]">
+                    Customers see this QR code on their request payment screen once work is completed.
+                  </p>
+                  <p className="text-[10px] font-mono text-[#718078]">
+                    Source: {paymentSettings.qrCodeUrl || "/images/payment-qr.jpg"}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Bank Transfer Settings */}
@@ -545,6 +616,129 @@ export default function SettingsPage() {
           </form>
         </div>
 
+        {/* DPDP Act 2023 — Data Protection & Grievance Officer Settings */}
+        <div className="homi-card p-6 space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-[#e5ebe4]">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-[#eef7ee] text-[#285437]">
+                <Shield className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-extrabold text-[#123b30]">
+                  DPDP Act 2023 — Grievance Officer &amp; Privacy Management
+                </h3>
+                <p className="text-xs text-[#718078]">
+                  Statutory data protection details displayed to customers on the Privacy &amp; Grievance Redressal page
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold px-2.5 py-1 bg-[#eef7ee] text-[#285437] rounded-full border border-[#d4ead0]">
+              DPDP Rules 2025 Compliant
+            </span>
+          </div>
+
+          {grievanceSuccess && (
+            <div className="p-3 bg-[#eef7ee] border border-[#c3e2be] text-[#285437] rounded-xl text-xs font-medium flex items-center gap-2">
+              <CheckCircle2 size={16} />
+              <span>{grievanceSuccess}</span>
+            </div>
+          )}
+
+          {grievanceError && (
+            <div className="p-3 bg-[#fdf2f2] border border-[#f5c6cb] text-[#b3483b] rounded-xl text-xs font-medium flex items-center gap-2">
+              <AlertCircle size={16} />
+              <span>{grievanceError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSaveGrievanceOfficer} className="space-y-4">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold text-[#718078] uppercase mb-1">
+                  Officer Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={grievanceOfficer.name}
+                  onChange={(e) => setGrievanceOfficer((g) => ({ ...g, name: e.target.value }))}
+                  placeholder="e.g. Grievance Officer (Designated)"
+                  className="w-full px-3 py-2 bg-white border border-[#e5ebe4] rounded-lg text-xs text-[#123b30] outline-none focus:border-[#123b30]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-[#718078] uppercase mb-1">
+                  Designation *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={grievanceOfficer.designation}
+                  onChange={(e) => setGrievanceOfficer((g) => ({ ...g, designation: e.target.value }))}
+                  placeholder="e.g. Data Protection & Grievance Redressal Officer"
+                  className="w-full px-3 py-2 bg-white border border-[#e5ebe4] rounded-lg text-xs text-[#123b30] outline-none focus:border-[#123b30]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-[#718078] uppercase mb-1">
+                  Official Email *
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={grievanceOfficer.email}
+                  onChange={(e) => setGrievanceOfficer((g) => ({ ...g, email: e.target.value }))}
+                  placeholder="e.g. grievance@homi.local"
+                  className="w-full px-3 py-2 bg-white border border-[#e5ebe4] rounded-lg text-xs font-mono text-[#123b30] outline-none focus:border-[#123b30]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-[#718078] uppercase mb-1">
+                  Contact Phone *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={grievanceOfficer.phone}
+                  onChange={(e) => setGrievanceOfficer((g) => ({ ...g, phone: e.target.value }))}
+                  placeholder="e.g. +91 755 000 0000"
+                  className="w-full px-3 py-2 bg-white border border-[#e5ebe4] rounded-lg text-xs font-mono text-[#123b30] outline-none focus:border-[#123b30]"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="block text-[10px] font-bold text-[#718078] uppercase mb-1">
+                  Official Postal Address *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={grievanceOfficer.address}
+                  onChange={(e) => setGrievanceOfficer((g) => ({ ...g, address: e.target.value }))}
+                  placeholder="e.g. Homi Platform Operations, Arera Colony, Bhopal, MP - 462016, India"
+                  className="w-full px-3 py-2 bg-white border border-[#e5ebe4] rounded-lg text-xs text-[#123b30] outline-none focus:border-[#123b30]"
+                />
+              </div>
+            </div>
+
+            <div className="pt-2 flex items-center justify-between">
+              <p className="text-[11px] text-[#718078]">
+                Changes are updated instantly in the Supabase database and reflected on the live customer Privacy page.
+              </p>
+              <button
+                type="submit"
+                disabled={savingGrievance || loadingGrievance}
+                className="btn btn-dark px-6 py-2.5 text-xs font-bold shadow-xs"
+              >
+                {savingGrievance ? "Saving Grievance Officer..." : "Save Grievance Details"}
+              </button>
+            </div>
+          </form>
+        </div>
+
         {/* Platform Architecture & Services Health */}
         <div className="homi-card p-6 space-y-4">
           <div className="flex items-center gap-3 pb-3 border-b border-[#e5ebe4]">
@@ -574,13 +768,13 @@ export default function SettingsPage() {
 
             <div className="p-3.5 bg-[#f8faf5] rounded-xl border border-[#e5ebe4] space-y-1">
               <span className="text-[10px] text-[#718078] font-bold uppercase tracking-wider">Backend API Server</span>
-              <p className="font-extrabold text-[#123b30]">Express.js + TypeScript</p>
+              <p className="font-extrabold text-[#123b30]">Go (Golang) + Gin</p>
               <p className="text-[11px] text-[#285437] font-bold">Port 4000 • Healthy</p>
             </div>
 
             <div className="p-3.5 bg-[#f8faf5] rounded-xl border border-[#e5ebe4] space-y-1">
               <span className="text-[10px] text-[#718078] font-bold uppercase tracking-wider">Database Engine</span>
-              <p className="font-extrabold text-[#123b30]">PostgreSQL 16 (Drizzle ORM)</p>
+              <p className="font-extrabold text-[#123b30]">Supabase PostgreSQL (RLS)</p>
               <p className="text-[11px] text-[#285437] font-bold">Port 5432 • Connected</p>
             </div>
           </div>

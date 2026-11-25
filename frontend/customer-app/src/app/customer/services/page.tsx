@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { ArrowRight, Wrench, ShieldCheck, Check } from "lucide-react";
-import { Header, Footer, services } from "@/components/site";
+import { Header, Footer } from "@/components/site";
+import { useServiceCategories } from "@/lib/categories";
 import { useLanguage } from "@/components/language";
 
 export default function CustomerServicesPage() {
   const { t, serviceLabel } = useLanguage();
+  const { categories: services } = useServiceCategories();
 
   return (
     <>
@@ -68,7 +70,7 @@ export default function CustomerServicesPage() {
                       <small style={{ fontSize: 10, color: "#718078", textTransform: "uppercase", fontWeight: 700, display: "block" }}>
                         Starting Fee
                       </small>
-                      <strong style={{ fontSize: 15, color: "#123b30" }}>₹149</strong>
+                      <strong style={{ fontSize: 15, color: "#123b30" }}>₹{s.startingPrice ?? 199}</strong>
                     </div>
                     <Link
                       href={`/book?category=${encodeURIComponent(s.name)}`}

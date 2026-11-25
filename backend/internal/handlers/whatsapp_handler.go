@@ -73,8 +73,14 @@ func (h *WhatsAppHandler) UpdateGroupLink(c *gin.Context) {
 	})
 }
 
-// GetJobMessage generates privacy-masked WhatsApp job message and retrieves group link
+// GetJobMessage generates privacy-masked WhatsApp job message and retrieves group link (Admins Only)
 func (h *WhatsAppHandler) GetJobMessage(c *gin.Context) {
+	admin := middleware.GetCurrentUser(c)
+	if admin == nil || admin.Role != "admin" {
+		utils.SendForbidden(c, "Administrator privileges required to view WhatsApp dispatch message")
+		return
+	}
+
 	reqIDParam := c.Param("id")
 	reqID, err := strconv.ParseUint(reqIDParam, 10, 32)
 	if err != nil {

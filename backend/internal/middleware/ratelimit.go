@@ -78,31 +78,62 @@ func (limiter *IPRateLimiter) Allow(ip string) bool {
 // GlobalRateLimiter allows up to 2000 requests/sec with burst of 5000 for local high-throughput testing & production resilience
 var globalLimiter = NewIPRateLimiter(2000, 5000)
 
-// AuthRateLimiter restricts login/registration to 30 attempts per minute per IP
-var authLimiter = NewIPRateLimiter(0.5, 30)
+// AuthRateLimiter restricts login/registration to 15 attempts per minute per IP
+var authLimiter = NewIPRateLimiter(0.25, 15)
+
+// RequestSubmissionLimiter restricts new service request submissions to 10 per minute per IP
+var requestSubmissionLimiter = NewIPRateLimiter(0.2, 10)
+
+// WorkerApplicationLimiter restricts worker registration attempts to 5 per 5 minutes per IP
+var workerApplicationLimiter = NewIPRateLimiter(0.05, 5)
 
 func RateLimitMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.Request.URL.Path
+		method := c.Request.Method
 
 		// Health endpoints are never rate limited (vital for load balancer health probes)
-		if path == "/health" || path == "/api/health" {
+		if path == "/health" || path == "/api/health" || path == "/api/v1/health" {
 			c.Next()
 			return
 		}
 
 		ip := c.ClientIP()
 
-		if strings.Contains(path, "/auth/login") || strings.Contains(path, "/auth/register") {
+		// 1. Authentication endpoints rate limiting
+		if strings.Contains(path, "/auth/login") || strings.Contains(path, "/auth/register") || (path == "/api/auth" && method == "POST") {
 			if !authLimiter.Allow(ip) {
 				c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
 					"ok":    false,
-					"error": "Too many requests. Please try again in a moment.",
+					"error": "Too many authentication attempts. Please wait a moment before trying again.",
 				})
 				return
 			}
 		}
 
+		// 2. Worker application rate limiting
+		if (strings.Contains(path, "/workers/apply") || strings.Contains(path, "/worker-applications")) && method == "POST" {
+			if !workerApplicationLimiter.Allow(ip) {
+				c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
+					"ok":    false,
+					"error": "Too many worker applications submitted from this IP. Please try again later.",
+				})
+				return
+			}
+		}
+
+		// 3. Service request submission rate limiting
+		if (path == "/api/requests" || path == "/api/v1/requests") && method == "POST" {
+			if !requestSubmissionLimiter.Allow(ip) {
+				c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
+					"ok":    false,
+					"error": "Request submission rate limit reached. Please wait before submitting another request.",
+				})
+				return
+			}
+		}
+
+		// 4. Global fallback limiter
 		if !globalLimiter.Allow(ip) {
 			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
 				"ok":    false,

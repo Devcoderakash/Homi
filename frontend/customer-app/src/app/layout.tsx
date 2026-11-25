@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { DM_Sans, Manrope } from "next/font/google";
 import { LanguageProvider } from "@/components/language";
+import { CookieConsent } from "@/components/CookieConsent";
 import "./globals.css";
 import "./workspace.css";
 import "leaflet/dist/leaflet.css";
@@ -41,7 +42,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${manrope.variable}`}>
-      <body><LanguageProvider>{children}</LanguageProvider></body>
+      <body>
+        <LanguageProvider>
+          {children}
+          <CookieConsent />
+        </LanguageProvider>
+      </body>
     </html>
   );
 }

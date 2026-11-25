@@ -38,6 +38,7 @@ func main() {
 	assignmentService := services.NewAssignmentService(db)
 	paymentService := services.NewPaymentService(db, storageService)
 	adminService := services.NewAdminService(db)
+	privacyService := services.NewPrivacyService(db)
 
 	// 4. Setup Routes and Middleware
 	router := routes.SetupRouter(&routes.RouterDependencies{
@@ -53,6 +54,7 @@ func main() {
 		AssignmentService:        assignmentService,
 		PaymentService:           paymentService,
 		AdminService:             adminService,
+		PrivacyService:           privacyService,
 	})
 
 	// 5. Start Server

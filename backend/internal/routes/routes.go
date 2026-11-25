@@ -26,6 +26,7 @@ type RouterDependencies struct {
 	AssignmentService        *services.AssignmentService
 	PaymentService           *services.PaymentService
 	AdminService             *services.AdminService
+	PrivacyService           *services.PrivacyService
 }
 
 func SetupRouter(deps *RouterDependencies) *gin.Engine {
@@ -74,6 +75,7 @@ func SetupRouter(deps *RouterDependencies) *gin.Engine {
 	assignH := handlers.NewAssignmentHandler(deps.AssignmentService)
 	adminH := handlers.NewAdminHandler(deps.AdminService, deps.WhatsAppService)
 	paymentH := handlers.NewPaymentHandler(deps.PaymentService)
+	privacyH := handlers.NewPrivacyHandler(deps.PrivacyService)
 
 	// Helper to attach routes to a router group (used for both /api/v1 and /api)
 	registerCoreRoutes := func(rg *gin.RouterGroup) {
@@ -93,7 +95,7 @@ func SetupRouter(deps *RouterDependencies) *gin.Engine {
 		rg.POST("/auth", authH.AuthDispatcher)
 
 		// --- PUBLIC DATA & UTILITIES ---
-		rg.GET("/categories", adminH.ListCategories)
+		rg.GET("/categories", adminH.ListPublicCategories)
 		rg.GET("/workers", workerH.ListWorkers)
 		rg.GET("/workers/:id", workerH.GetWorkerByID)
 		rg.DELETE("/workers/:id", workerH.DeleteWorker)
@@ -115,6 +117,7 @@ func SetupRouter(deps *RouterDependencies) *gin.Engine {
 		rg.GET("/requests/:id", reqH.GetRequestByID)
 		rg.PATCH("/requests/:id", reqH.PatchRequest)
 		rg.PATCH("/requests/:id/status", reqH.UpdateStatus)
+		rg.POST("/requests/:id/status", reqH.UpdateStatus)
 		rg.POST("/requests/:id/photos", reqH.UploadPhotos)
 		rg.GET("/requests/:id/receipt", custH.GetReceipt)
 		rg.GET("/requests/:id/quotation", quoteH.GetLatestQuotation)
@@ -149,6 +152,12 @@ func SetupRouter(deps *RouterDependencies) *gin.Engine {
 		rg.PUT("/settings/whatsapp-group", whatsappH.UpdateGroupLink)
 		rg.POST("/settings/whatsapp-group", whatsappH.UpdateGroupLink)
 
+		// --- DPDP PRIVACY & CONSENT (DPDP Act 2023) ---
+		rg.POST("/privacy/consent", privacyH.RecordConsent)
+		rg.POST("/privacy/requests", privacyH.SubmitDataSubjectRequest)
+		rg.GET("/privacy/export", privacyH.ExportMyData)
+		rg.GET("/privacy/grievance-officer", privacyH.GetGrievanceOfficer)
+
 		// --- ADMIN GROUP (Strictly protected with RequireAdmin) ---
 		admin := rg.Group("/admin")
 		admin.Use(middleware.RequireAdmin())
@@ -161,6 +170,10 @@ func SetupRouter(deps *RouterDependencies) *gin.Engine {
 			admin.GET("/requests", reqH.ListRequests)
 			admin.GET("/requests/:id", reqH.GetRequestByID)
 			admin.PATCH("/requests/:id/status", reqH.UpdateStatus)
+			admin.POST("/requests/:id/status", reqH.UpdateStatus)
+			admin.POST("/requests/:id/publish", reqH.PublishRequest)
+			admin.POST("/requests/:id/reject", reqH.RejectRequest)
+			admin.POST("/requests/:id/assign", assignH.ConfirmAssignment)
 			admin.GET("/requests/:id/whatsapp-message", whatsappH.GetJobMessage)
 			admin.POST("/requests/:id/mark-shared", whatsappH.MarkShared)
 
@@ -213,10 +226,16 @@ func SetupRouter(deps *RouterDependencies) *gin.Engine {
 			admin.POST("/categories", adminH.CreateCategory)
 			admin.PUT("/categories/:id", adminH.UpdateCategory)
 			admin.PATCH("/categories/:id/toggle", adminH.ToggleCategory)
+			admin.DELETE("/categories/:id", adminH.DeleteCategory)
 
 			admin.GET("/notifications", custH.GetNotifications)
 			admin.PATCH("/notifications/:id/read", custH.MarkNotificationsRead)
 			admin.POST("/notifications/mark-all-read", custH.MarkNotificationsRead)
+
+			// Admin DPDP Privacy Requests & Grievance Redressal
+			admin.GET("/privacy/requests", privacyH.ListDataSubjectRequests)
+			admin.PATCH("/privacy/requests/:id", privacyH.ResolveDataSubjectRequest)
+			admin.PUT("/privacy/grievance-officer", privacyH.UpdateGrievanceOfficer)
 		}
 	}
 

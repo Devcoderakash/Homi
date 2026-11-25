@@ -51,3 +51,31 @@ func SanitizeRequestForCustomer(req *models.ServiceRequest) models.ServiceReques
 
 	return copyReq
 }
+
+// SanitizeWorkerForPublic strips private verification documents, home address, email,
+// and masks phone numbers for the public directory to ensure DPDP Act 2023 compliance.
+func SanitizeWorkerForPublic(w *models.Worker) models.Worker {
+	if w == nil {
+		return models.Worker{}
+	}
+
+	safe := *w
+	// Strictly redact sensitive personal verification documents and private contact info
+	safe.Email = ""
+	safe.Address = "" // Keep Area and City, redact full private street address
+	safe.DocumentType = ""
+	safe.DocumentURL = ""
+	safe.DocumentsURL = ""
+	safe.UserID = nil
+
+	// Mask phone number for public display (e.g. "+91 98*** ***12")
+	if len(safe.Phone) >= 7 {
+		prefix := safe.Phone[:3]
+		suffix := safe.Phone[len(safe.Phone)-2:]
+		safe.Phone = prefix + "******" + suffix
+	} else if len(safe.Phone) > 0 {
+		safe.Phone = "******"
+	}
+
+	return safe
+}

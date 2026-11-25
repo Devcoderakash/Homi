@@ -100,6 +100,7 @@ export type ServiceCategory = {
   icon?: string;
   color?: string;
   startingPrice?: number;
+  sortOrder?: number;
   active: boolean;
   requestCount?: number;
 };

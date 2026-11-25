@@ -3,7 +3,7 @@ import { CalendarDays, Clock3, Languages, MapPin, Wrench, ArrowRight, IndianRupe
 import Link from "next/link";
 import { ContactActions } from "@/components/contact-actions";
 import { useAppCopy, useLanguage } from "@/components/language";
-import { formatDate, services, type ServiceRequest } from "@/components/site";
+import { formatDate, useServiceCategories, type ServiceRequest } from "@/components/site";
 import { languages } from "@/lib/locales";
 import { readableTime } from "@/lib/india";
 import { money } from "@/lib/app-copy";
@@ -14,6 +14,7 @@ import { formatVisit } from "@/lib/visit-time";
 import { Camera, CalendarCheck2 } from "lucide-react";
 export function RequestCard({ request: r, workerView = false, detail = false, children }: { request: ServiceRequest; workerView?: boolean; detail?: boolean; children?: React.ReactNode }) {
   const { language, t, serviceLabel, statusLabel } = useLanguage(); const { a } = useAppCopy();
+  const { categories: services } = useServiceCategories();
   const l = (key: Parameters<typeof locationText>[1]) => locationText(language, key); const { s } = useServiceCopy();
   const service = services.find(s => s.name === r.category); const Icon = service?.icon || Wrench;
   const name = workerView ? r.customerName : (r.selectedWorkerName || r.workerName);

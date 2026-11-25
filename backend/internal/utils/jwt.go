@@ -118,12 +118,7 @@ func ValidateSupabaseJWT(tokenString, secret, supabaseURL, anonKey string) (*Sup
 		}
 	}
 
-	// 4. In development mode without live Supabase cloud keys, accept valid unexpired token with sub & email
-	if claims.Subject != "" && claims.Email != "" {
-		return &claims, nil
-	}
-
-	return nil, errors.New("invalid Supabase token")
+	return nil, errors.New("invalid or unverified Supabase token: signature verification failed")
 }
 
 // VerifyWithSupabaseAPI calls the official Supabase /auth/v1/user endpoint

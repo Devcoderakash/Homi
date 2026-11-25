@@ -38,6 +38,7 @@ type PublicApplicationInput struct {
 	ProfilePhotoURL string `json:"profilePhotoUrl"`
 	DocumentsURL    string `json:"documentsUrl"`
 	DocumentURL     string `json:"documentUrl"`
+	Honeypot        string `json:"website"` // Anti-bot honeypot
 }
 
 func (s *WorkerApplicationService) SubmitApplication(input PublicApplicationInput) (*models.WorkerApplication, error) {
